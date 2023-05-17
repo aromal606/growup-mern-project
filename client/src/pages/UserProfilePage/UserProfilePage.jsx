@@ -4,6 +4,8 @@ import LeftSideBarComponent from "../../Components/User/Leftsidebar/LeftSideBarC
 import Card from "../../Components/Card/Card";
 import NavigationBarComponent from "../../Components/User/Navigationbar/NavigationBarComponent";
 import PostSharingComponent from "../../Components/User/PostSharing/PostSharingComponent";
+import PostCardHeaderSection from "../../Components/User/PostCard/PostCardHeaderSection";
+import axios from "axios";
 const UserProfilePage = () => {
   const [posts, setPosts] = useState("");
   useEffect(() => {
@@ -26,7 +28,7 @@ const UserProfilePage = () => {
         <div className="grow overflow-x-scroll">
           <UserProfileComponent />
           <div className="h-screen bg-red-200">
-
+            {/* <PostCardHeaderSection/> */}
           </div>
         </div>
       </div>

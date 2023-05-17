@@ -13,8 +13,27 @@ import './App.css'
 import HomePage from './pages/User/Home/homePage'
 import OtpLogin from './Components/User/OtpSection/OtpLogin'
 import UserProfilePage from './pages/UserProfilePage/UserProfilePage'
-
+import UpdateProfilePage from './pages/User/UpdateProfilePage/UpdateProfilePage'
+import { useDispatch, useSelector } from 'react-redux'
+import {setLogin} from '../redux/features/authSlice'
+import UpdateProfileComponentUser from './Components/User/UpdateProfile/UpdateProfileComponentUser'
 const App = () => {  
+//   const dispatch = useDispatch();
+
+
+//   const verifyUser = async ()=>{
+//       const {data} = await axios.post(
+//         "http://localhost:4000",{},
+//         {withCredentials: true}
+//         );
+        
+//         dispatch(setLogin({user:data?.user?._id}))
+//       }
+      
+//       useEffect(() => {
+//         verifyUser()
+//       }, [])
+
   return (
      <BrowserRouter>
      <Routes>
@@ -25,6 +44,8 @@ const App = () => {
     <Route exact path="/home" element={<HomePage/>}/>
       <Route exact path="/Logout" element={<Logout/>}/>
       <Route exact path="/profile" element={<UserProfilePage/>}/>
+      <Route exact path="/updateprofile" element={<UpdateProfilePage/>}/>
+      <Route exact path="/update" element={<UpdateProfileComponentUser/>}/>
      </Routes>
      </BrowserRouter>
   )

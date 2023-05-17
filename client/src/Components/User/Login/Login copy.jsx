@@ -7,6 +7,7 @@ import loginImg from "../../../assets/images/4204968.jpg";
 import logo from "../../../assets/images/talentF-c.png";
 
 const login = () => {
+
   const token = localStorage.getItem("jwt");
   const usertype = localStorage.getItem("usertype");
   const navigate = useNavigate();
@@ -193,3 +194,10 @@ const dispatch=useDispatch()
 };
 
 export default login;
+
+
+
+
+
+
+

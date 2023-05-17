@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-
+import Lottie from 'lottie-react'
+import registrationAnimation from '../../../../src/Animation/registrationAnimation.json'
 import loginImg from "../../../assets/images/4204968.jpg";
 import logo from "../../../assets/images/talentF-c.png";
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -19,11 +19,7 @@ function SignUp() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
   const [formError, setFormError] = useState("");
-
-  /* ----------------------------------- OTP ---------------------------------- */
-
   const onSubmit = async (formData) => {
     setFormValues(formData);
     try {
@@ -37,20 +33,19 @@ function SignUp() {
         }
       );
       if (data) {
-        console.log("inside data");
-        // console.log(data);
         if (data.errors) {
           console.log(data.errors);
           toast.error(data.errors, {
             position: toast.POSITION.TOP_RIGHT
         });
-          // alert(data.errors)
         } else {
+          localStorage.setItem('id',data.user._id)
+          localStorage.setItem('token',data.token)
           console.log("Registration successful");
           toast.success('Registration successful !', {
             position: toast.POSITION.TOP_RIGHT
         });
-          navigate("/profile");
+          navigate("/updateprofile");
         }
       }
     } catch (e) {
@@ -60,20 +55,16 @@ function SignUp() {
     });
     }
   };
-
-  /* ------------------------------- resent OTP ------------------------------- */
-
   return (
     <>
       <section className="bg-white-50 min-h-screen flex items-center justify-center">
         <div className="bg-white-100 flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
           <div className="md:block hidden w-1/2 ">
             <div className="flex justify-center ">
-              <img src={logo} className="w-40" alt="logo" />
+              {/* <img src={logo} className="w-40" alt="logo" /> */}
             </div>
-            <img className="rounded-2xl" src={loginImg} />
+            <Lottie animationData={registrationAnimation} loop={true} />
           </div>
-
           <div className="md:w-1/2 px-8 md:px-16">
             <div className="w-full mb-4 flex justify-center">
               <img src={logo} className="w-36 md:hidden " alt="logo" />

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import Lottie from 'lottie-react'
+import loginAnimation from '../../../../src/Animation/loginAnimation.json'
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import axios, { Axios } from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import loginImg from "../../../assets/images/4204968.jpg";
 import logo from "../../../assets/images/talentF-c.png";
 import authAPI from "../../../API/authApi";
 import axiosConfig from "../../../config/axiosConfig";
-
+import {setLogin} from '../../../../redux/features/authSlice'
 const login = () => {
   const token = localStorage.getItem("jwt");
   const usertype = localStorage.getItem("usertype");
@@ -17,7 +18,7 @@ const login = () => {
   const [formError, setFormError] = useState("");
   const [user, setUser] = useState();
   const dispatch = useDispatch();
-  const { login } = authAPI()
+  const { login } = authAPI();
   useEffect(() => {
     if (token) {
       if (usertype == "client") {
@@ -42,49 +43,61 @@ const login = () => {
     e.preventDefault();
     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     console.log({ ...formValues });
-    try {
-      if (!formValues.email) {
-        setFormError("email is required");
-      } else if (!regex.test(formValues.email)) {
-        setFormError("enter a valid email");
-      } else if (!formValues.password) {
-        setFormError("password is required");
-      } else if (
-        formValues.password.length < 6 ||
-        formValues.password.length > 12
-      ) {
-        setFormError("Password must be in between 6 to 12 characters");
-      } else {
-        try {
-          console.log(formValues);
-          const response = await login(formValues);
-         // const { response } = await axiosConfig.post(login);
-          //const response = await login(formValues)
-          // const {email}=response.user
-          // console.log("---", email, "-----");
-          localStorage.setItem("jwt", response);
+    if (!formValues.email) {
+      setFormError("email is required");
+    } else if (!regex.test(formValues.email)) {
+      setFormError("enter a valid email");
+    } else if (!formValues.password) {
+      setFormError("password is required");
+    } else if (
+      formValues.password.length < 6 ||
+      formValues.password.length > 12
+    ) {
+      setFormError("Password must be in between 6 to 12 characters");
+    } else {
+      try {
+        console.log(formValues);
 
-          if (response) {
-            localStorage.setItem("usertype", response.accounttype);
-            localStorage.setItem("id", response.user);
-
-            setUser(response);
-            console.log(response);
-            if (response.errors) {
-              console.log("error");
-            } else {
-              navigate("/home");
-            }
-          }
-        } catch (error) {
-          // toast.error(error.response.response.error, {
-          //   position: toast.POSITION.TOP_RIGHT,
-          // });
-          console.log(error);
+        const response = await login(formValues);
+        console.log(response, "qw");
+        if (response.status == 201) {
+          toast.error(response.data.message, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
         }
+        if (response.status == 200) {
+          localStorage.setItem("token",response.data.token)
+          localStorage.setItem("usertype", response.data.user.accounttype);
+          localStorage.setItem("id", response.data.user._id);
+          dispatch(setLogin({
+            user:response.data.user._id,
+            username:response.data.user.name,
+            email:response.data.user.email,
+          }))
+          navigate("/home");
+        }
+        // const {email}=response.user
+        // console.log("---", response, "-----");
+        // localStorage.setItem("jwt", response);
+
+        // if (response) {
+        //   localStorage.setItem("usertype", response.accounttype);
+        //   localStorage.setItem("id", response.user);
+
+        //   setUser(response);
+        //   console.log(response);
+        //   if (response.errors) {
+        //     console.log("error");
+        //   } else {
+        //     navigate("/home");
+        //   }
+        // }
+      } catch (error) {
+        // toast.error(error.response.response.error, {
+        //   position: toast.POSITION.TOP_RIGHT,
+        // });
+        console.log(error);
       }
-    } catch (e) {
-      console.log(e);
     }
   };
 
@@ -95,9 +108,9 @@ const login = () => {
           <div className="bg-white-100 flex rounded-2xl shadow-lg max-w-3xl p-5 items-center">
             <div className="md:block hidden w-1/2">
               <div className="flex justify-center ">
-                <img src={logo} className="w-40" alt="logo" />
+                {/* <img src={logo} className="w-40" alt="logo" /> */}
               </div>
-              <img className="rounded-2xl" src={loginImg} />
+              <Lottie animationData={loginAnimation} loop={true} />
             </div>
 
             <div className="md:w-1/2 px-8 md:px-16">

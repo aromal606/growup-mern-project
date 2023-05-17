@@ -6,9 +6,12 @@ import NavigationBarComponent from "../../../Components/User/Navigationbar/Navig
 import PostSharingComponent from "../../../Components/User/PostSharing/PostSharingComponent";
 import PostCardHeaderSection from "../../../Components/User/PostCard/PostCardHeaderSection";
 import Card from "../../../Components/Card/Card";
+import {useSelector} from 'react-redux'
 const homePage = () => {
+  const user = useSelector((state)=>state.auth)
+  console.log(user,"user");
   const navigate = useNavigate();
-  const token = localStorage.getItem("jwt");
+  const token = localStorage.getItem("token");
   const userType = localStorage.getItem("usertype");
 
   const [posts, setPosts] = useState("");

@@ -4,7 +4,6 @@ import Avatar from "../../../Components/User/Avatar";
 import axios from "axios";
 
 const PostCardHeaderSection = (props) => {
-  console.log(props.posts.data);
   const post = props?.posts?.data;
   const [comment, setComment] = useState("");
   const [dropDownOpen, setDropdownOpen] = useState(false);

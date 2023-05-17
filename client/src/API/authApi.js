@@ -1,21 +1,15 @@
-import React from 'react'
-// import axiosConfig from '../config/axiosConfig';
-import  axiosConfigs from '../config/axiosConfig'
-// import axiosConfig from '../config/axiosConfig'
-import axios from 'axios';
-
-
+import  axiosConfig from '../config/axiosConfig'
 const authAPI = ()=>{
     const login = async (logindata) =>{
+        console.log(logindata,"p");
         try{
-            console.log('hi');
-           console.log(logindata);
-           const response = await axiosConfigs.post('/login', logindata)
-           console.log('looo', response.data);
-           return response.data
+           const response = await axiosConfig.post('/login', logindata)
+           console.log('looo', response);
+           return response
         }catch(err){
+            console.log("error");
             // throw{msg: err.response.data.message}
-            console.log(err);
+            console.log(err,"error");
         }
     }
 

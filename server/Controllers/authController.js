@@ -6,6 +6,17 @@ import dotenv from "dotenv";
 dotenv.config();
 import crypto from "crypto";
 import sharp from "sharp";
+
+import jwt from "jsonwebtoken";
+import { LocalStorage } from "node-localstorage";
+const localStorage = new LocalStorage("./scratch");
+const maxAge = 3 * 24 * 60 * 60
+const createTocken = (id) => {
+return jwt.sign({ id }, "jwtsecretkey", {
+    expiresIn: maxAge
+})
+}
+
 // ---------creating random names for storing images/videos in s3 bucket-----------
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
 // const bucketName = process.env.BUCKET_NAME
@@ -13,6 +24,8 @@ const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
 // const accessKey = process.env.ACCESS_KEY
 // const SecretAccessKey = process.env.SECRET_ACCESS_KEY
 const bucketName = 'userpostingdata'
+const bucketName2 = 'profilepicturefiles'
+
 const bucketRegion = 'ap-south-1'
 const accessKey = 'AKIA4JF6RM5HVIGNXMC4'
 const secretAccessKey = '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'
@@ -25,16 +38,7 @@ const s3 = new S3Client({
 });
 
 
-    import jwt from "jsonwebtoken";
-    import { LocalStorage } from "node-localstorage";
-    const localStorage = new LocalStorage("./scratch");
-const maxAge = 3 * 24 * 60 * 60
-const createTocken = (id) => {
-    return jwt.sign({ id }, "jwtsecretkey", {
-        expiresIn: maxAge
-    })
-}
-
+  
 const handleErrors = (err) => {
 
     let errors = { email: "", number: "" }
@@ -58,21 +62,16 @@ const handleErrors = (err) => {
 
 
 export const login = async (req, res, next) => {
-    
     try {
-        console.log("gygygyg",req.body);
-        const { email, password, accounttype } = req.body;
-        const user = await userModel.login(email, password, accounttype)
-        console.log(user, 'usert');
-        // const token = createTocken(user._id)
-        // localStorage.setItem({ "id": user._id })
-        res.json(user)
-        // res.status(200).json({ user: user._id, accounttype: user.accounttype, created: true, token: token })
+        const { email, password } = req.body;
+        const user = await userModel.login(email, password)
+        const token = createTocken(user._id)
+            res.status(200).json({user,token})
     } catch (err) {
         if (err.message === "Incorrect password") {
-            res.status(400).json({ error: "Incorrect password" });
+            res.status(201).json({ message: "Incorrect password" });
         } else {
-            res.status(400).json({ error: "Incorrect email" });
+            res.status(201).json({ message: "Incorrect email" });
         }
     }
 }
@@ -86,8 +85,8 @@ export const register = async (req, res, next) => {
         const user = await userModel.create({ name, email, number, password, accounttype })
 
         const token = createTocken(user._id)
-
-        res.status(201).json({ user: user._id, created: true, accounttype: user.accounttype, email: user.email })
+        res.status(201).json({ user, token })
+        // res.status(201).json({ user: user._id, created: true, accounttype: user.accounttype, email: user.email })
     } catch (err) {
         console.log(err)
         const errors = handleErrors(err)
@@ -144,6 +143,55 @@ export const userPostShare = async (req, res, next) => {
 }
 }
 
+
+// update profile---------------------
+
+export const uploadFile=(fileBuffer, fileName, mimetype)=>{
+    const uploadParams = {
+      Bucket: bucketName,
+      Body: fileBuffer,
+      Key: fileName,
+      ContentType: mimetype,
+  
+    }
+  
+    return s3.send(new PutObjectCommand(uploadParams));
+  } 
+  
+
+export const updateProfile = async (req,res,next)=>{
+    try {
+        const checkboxValues = req.body.checkbox.split(',');
+console.log(checkboxValues);
+        if(req.file){
+            const file = req.file
+            const imageName = randomName()
+    
+            const fileBuffer = await sharp(file.buffer)
+              .resize({ height: 1000, width: 1000, fit: "contain" })
+              .toBuffer()
+          
+            await uploadFile(fileBuffer, imageName, file.mimetype)
+    
+            await userModel.findOneAndUpdate(
+                { _id: req.body.userId },
+                { name: req.body.name, bio: req.body.about,companyname:req.body.companyname, imageName: imageName,workingOn:checkboxValues },
+                { new: true }
+              );
+                      }else{
+            await userModel.findOneAndUpdate(
+                { _id: req.body.userId },
+                { name: req.body.name, bio: req.body.about,companyname:req.body.companyname,workingOn:checkboxValues },
+                { new: true }
+              );
+        }
+        res.status(201).json({created:true})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error)
+    }
+}
+
 // -------------------getPost-------------------------
 
 export const getPosts = async (req,res,next)=>{
@@ -167,6 +215,30 @@ export const getPosts = async (req,res,next)=>{
         console.log(error);
     }
 }
+// get profile data--------------------
+
+export const userProfileData=async(req,res,next)=>{
+ console.log(req.params.id);
+    try {
+        const userData=await userModel.find({_id:req.params.id})
+        console.log(userData);
+        if(userData){
+            res.status(201).json(userData)
+        }else{
+            res.status(401)
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// --------------------------
+// get user---------------------------
+
+export const userData=async (req,res,next)=>{
+    console.log(req.params.id);
+}
+
 
 export const getOtpPh=async (req,res,next)=>{
     const number=req.body.ph
@@ -176,17 +248,27 @@ export const getOtpPh=async (req,res,next)=>{
     try {
         const verifyNumber=await userModel.findOne({number:splitNumber})
         if(verifyNumber){
+            const token=createTocken(verifyNumber._id)
+            console.log(token);
+            
             console.log(verifyNumber);
-            res.status(200).json(verifyNumber);
+            res.status(200).json({verifyNumber,token});
         }else {
             console.log("Number not found in the database");
-            res.status(404).send("Number not found in the database");
+            res.status(400).send("Number not found in the database");
           }
     } catch (error) {
       console.log(error);  
       res.status(500).send("Internal Server Error");
     }
 }
+
+// export const updateProfile=async(req,res,next)=>{
+//     console.log(req.body);
+// }
+
+
+
 
 // ---------------likePost------------
 // module.exports.likePost = async (req,res,next)=>{

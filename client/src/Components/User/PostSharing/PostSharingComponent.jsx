@@ -40,7 +40,7 @@ const PostSharingComponent = () => {
   return (
     <>
       <div className=" w-3/4 rounded-md sm:p-2 md:p-3 xl:p-4">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} >
           <Card>
             <div className="flex grow gap-1">
               {/* <ProfileImageComponent userId={user?.user} /> */}
