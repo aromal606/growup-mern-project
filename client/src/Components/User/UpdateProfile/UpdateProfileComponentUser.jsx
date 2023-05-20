@@ -1,21 +1,66 @@
-import React, { useState } from "react";
-import ProfileUpdate from "../../Form/ProfileUpdate";
-import { BsCloudUpload } from "react-icons/bs";
-import { Field, Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { Field, Form, Formik, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Card from "../../Card/Card";
 const UpdateProfileComponentUser = () => {
-  const navigate = useNavigate();
   const id = localStorage.getItem("id");
+  const [userData, setUserData] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = localStorage.getItem("id");
+
+      try {
+        const response = await axios.get(
+          `http://localhost:4000/getprofile/${id}`
+        );
+        console.log(response.data, "22");
+        if (response.data.length > 0) {
+          setUserData(response.data[0]); // Access the first element of the array
+        }
+      } catch (error) {
+        // Handle error
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  const navigate = useNavigate();
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    about: Yup.string().required("mention about yourself"),
+    profilepicture: Yup.mixed()
+      .test("fileType", "Invalid file format", (value) => {
+        if (!value) return true; // Allow empty value (no file selected)
+        return ["image/jpeg", "image/png"].includes(value.type);
+      })
+      .test("fileSize", "File size is too large", (value) => {
+        if (!value) return true; // Allow empty value (no file selected)
+        return value.size <= 5 * 1024 * 1024; // 5MB limit (adjust as needed)
+      }),
+    companyname: Yup.string().required("Company name is required"),
+    checkbox: Yup.array().min(1, "Select at least one checkbox"),
+  });
+  const checkboxOptions = [
+    { value: "Vue JS", label: "Vue JS" },
+    { value: "react", label: "React" },
+    { value: "angular", label: "Angular" },
+    { value: "Laravel", label: "Laravel" },
+  ];
+  console.log(userData.name);
   const [imagePreview, setimagePreview] = useState(false);
   const initialValues = {
-    name: "",
-    email: "",
-    about: "",
+    name: userData.name || "",
+    email: userData.email || "",
+    about: userData.about || "",
     profilepicture: "",
-    companyname: "",
-    checkbox: "",
+    companyname: userData.companyname || "",
+    checkbox: userData.workingOn || "",
   };
   const onSubmit = async (values) => {
     console.log(values.checkbox);
@@ -26,7 +71,10 @@ const UpdateProfileComponentUser = () => {
     formData.append("email", values.email);
     formData.append("about", values.about);
     formData.append("companyname", values.companyname);
-    formData.append("checkbox", values.checkbox);
+    values.checkbox.forEach((checkboxValue) => {
+      formData.append("checkbox", checkboxValue);
+    });
+
     formData.append("userId", id);
     console.log(formData);
     const response = await axios.post(
@@ -46,15 +94,20 @@ const UpdateProfileComponentUser = () => {
 
     console.log(response);
   };
+  if (Object.keys(userData).length === 0) {
+    // Render a loading state or return null while data is being fetched
+    return <div>Loading...</div>;
+  }
   return (
     <Formik
       initialValues={initialValues}
+      validationSchema={validationSchema}
       onSubmit={onSubmit}
       encType="multipart/form-data"
     >
       {({ handleSubmit }) => (
         <div className="md:grid grid-cols gap-2 px-10">
-            <Card>
+          <Card>
             <div className="section flex border justify-center">
               <div className=" ">
                 <h1 className="font-bold text-2xl py-2 flex justify-center items-center text-blue-500">
@@ -89,6 +142,11 @@ const UpdateProfileComponentUser = () => {
                           id="name"
                           placeholder="Enter your name"
                         />
+                        <ErrorMessage
+                          name="name"
+                          component="div"
+                          className="text-red-500"
+                        />
                       </div>
                       <div className="mb-4">
                         <label
@@ -103,6 +161,11 @@ const UpdateProfileComponentUser = () => {
                           name="email"
                           id="email"
                           placeholder="Enter your email"
+                        />
+                        <ErrorMessage
+                          name="email"
+                          component="div"
+                          className="text-red-500"
                         />
                       </div>
                     </div>
@@ -121,6 +184,11 @@ const UpdateProfileComponentUser = () => {
                           id="companyname"
                           placeholder="company name or startup name"
                         />
+                        <ErrorMessage
+                          name="companyname"
+                          component="div"
+                          className="text-red-500"
+                        />
                       </div>
                       <div className="mb-4">
                         <label
@@ -136,6 +204,11 @@ const UpdateProfileComponentUser = () => {
                           onChange={(event) => {
                             setimagePreview(event.target.files[0]);
                           }}
+                        />
+                        <ErrorMessage
+                          name="profilepicture"
+                          component="div"
+                          className="text-red-500"
                         />
                       </div>
                     </div>
@@ -153,86 +226,40 @@ const UpdateProfileComponentUser = () => {
                         id="about"
                         placeholder="add about.."
                       />
+                      <ErrorMessage
+                        name="about"
+                        component="div"
+                        className="text-red-500"
+                      />
                     </div>
-                    <div className="">
-                      <label
-                        className="block text-gray-700 font-bold mb-2"
-                        htmlFor="checkboxData"
-                      >
-                        Working At
-                      </label>
-                      <ul className=" grid grid-cols-2   items-center w-full text-sm font-medium text-gray-900 bg-white border-gray-200 rounded-lg sm:grid md:grid-cols-5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
-                          <div className="flex items-center pl-3">
-                            <label
-                              htmlFor="vue-checkbox-list"
-                              className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
+                    <div className="flex items-center justify-between">
+                      {checkboxOptions.map((option) => (
+                        <div key={option.value} className=" items-center pl-3">
+                          {/* <ul className="border"> */}
+                            {/* <li> */}
                               <Field
                                 type="checkbox"
                                 name="checkbox"
-                                // id="checkbox1"
-                                value="Vue JS"
+                                value={option.value}
                                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                               />
-                              Vue JS
-                            </label>
-                          </div>
-                        </li>
-
-                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
-                          <div className="flex items-center pl-3">
-                            <Field
-                              type="checkbox"
-                              name="checkbox"
-                              id="checkbox2"
-                              value="react"
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                            />
-                            <label
-                              htmlFor="react-checkbox-list"
-                              className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              React
-                            </label>
-                          </div>
-                        </li>
-                        <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
-                          <div className="flex items-center pl-3">
-                            <Field
-                              type="checkbox"
-                              name="checkbox"
-                              id="checkbox3"
-                              value="angular"
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                            />
-                            <label
-                              htmlFor="angular-checkbox-list"
-                              className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              Angular
-                            </label>
-                          </div>
-                        </li>
-                        <li className="w-full dark:border-gray-600">
-                          <div className="flex items-center pl-3">
-                            <Field
-                              type="checkbox"
-                              name="checkbox"
-                              id="checkbox4"
-                              value="Laravel"
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                            />
-                            <label
-                              htmlFor="laravel-checkbox-list"
-                              className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              Laravel
-                            </label>
-                          </div>
-                        </li>
-                      </ul>
+                              <label
+                                htmlFor={`${option.value}-checkbox-list`}
+                                className="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                              >
+                                {option.label}
+                              </label>
+                            {/* </li> */}
+                          {/* </ul> */}
+                        </div>
+                      ))}
+                      <ErrorMessage
+                        name="checkbox"
+                        component="div"
+                        className="text-red-500"
+                      />
                     </div>
+
                     <div className="flex justify-center items-center mt-10">
                       <button
                         type="submit"
@@ -245,8 +272,8 @@ const UpdateProfileComponentUser = () => {
                 </div>
               </div>
             </div>
-        </Card>
-          </div>
+          </Card>
+        </div>
       )}
     </Formik>
   );

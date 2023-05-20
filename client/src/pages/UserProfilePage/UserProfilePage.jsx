@@ -3,8 +3,6 @@ import UserProfileComponent from "../../Components/User/UserProfile/UserProfileC
 import LeftSideBarComponent from "../../Components/User/Leftsidebar/LeftSideBarComponent";
 import Card from "../../Components/Card/Card";
 import NavigationBarComponent from "../../Components/User/Navigationbar/NavigationBarComponent";
-import PostSharingComponent from "../../Components/User/PostSharing/PostSharingComponent";
-import PostCardHeaderSection from "../../Components/User/PostCard/PostCardHeaderSection";
 import axios from "axios";
 const UserProfilePage = () => {
   const [posts, setPosts] = useState("");

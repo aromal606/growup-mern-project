@@ -4,14 +4,15 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import Lottie from 'lottie-react'
 import registrationAnimation from '../../../../src/Animation/registrationAnimation.json'
-import loginImg from "../../../assets/images/4204968.jpg";
 import logo from "../../../assets/images/talentF-c.png";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useDispatch,useSelector} from 'react-redux'
+import { setLogin } from "../../../../redux/features/authSlice";
 
 function SignUp() {
+  const dispatch=useDispatch()
   const navigate = useNavigate();
-  //  const handleError = useErrorBoundary()
   const [formvalues, setFormValues] = useState();
 
   const {
@@ -39,9 +40,14 @@ function SignUp() {
             position: toast.POSITION.TOP_RIGHT
         });
         } else {
+          console.log(data,"33");
+          console.log(data.user._id,"33");
           localStorage.setItem('id',data.user._id)
           localStorage.setItem('token',data.token)
           console.log("Registration successful");
+          dispatch(setLogin({
+            userId:data.user._id,
+          }))
           toast.success('Registration successful !', {
             position: toast.POSITION.TOP_RIGHT
         });

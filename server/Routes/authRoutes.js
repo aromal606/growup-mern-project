@@ -1,5 +1,5 @@
 import express  from 'express';
-import {login,register,userPostShare,getPosts,getOtpPh, updateProfile, userProfileData, userData} from '../Controllers/authController.js'
+import {login,register,userPostShare,getPosts,getOtpPh, updateProfile, userProfileData, userData, likePost, getUsername} from '../Controllers/authController.js'
 const routes=express.Router()
 import multer, { memoryStorage } from 'multer'
 const storage = memoryStorage()
@@ -13,5 +13,7 @@ routes.get("/getPosts",getPosts)
 routes.get("/getprofile/:id",userProfileData)
 routes.post("/otp_login",getOtpPh)
 routes.get("/getUser/:id",userData)
+routes.post("/getUsername",getUsername)
 routes.post("/updateprofile",upload.single("profilepicture"),updateProfile)
+routes.post("/likepost",likePost)
 export default routes;

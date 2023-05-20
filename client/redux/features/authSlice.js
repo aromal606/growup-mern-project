@@ -10,6 +10,7 @@ const authSlice=createSlice({
     name:'auth',
     initialState:{
         user:null,
+        userId:null,
         token:null,
         email:"",
         accounttype:"",
@@ -24,6 +25,7 @@ const authSlice=createSlice({
         state.user = action.payload.user;
         state.username=action.payload.username
         state.email=action.payload.email
+        state.userId=action.payload.userId
       },
       setLogout:(state)=>{
         state.user=null

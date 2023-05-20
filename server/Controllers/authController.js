@@ -114,7 +114,6 @@ export const userPostShare = async (req, res, next) => {
         const command = new PutObjectCommand(params)
             const content = req.body.caption
            const userId=req.body.userid
-            console.log(userId);
             const dateAndTime = new Date();
             const status = "active"
 
@@ -144,7 +143,6 @@ export const userPostShare = async (req, res, next) => {
 }
 
 
-// update profile---------------------
 
 export const uploadFile=(fileBuffer, fileName, mimetype)=>{
     const uploadParams = {
@@ -156,41 +154,81 @@ export const uploadFile=(fileBuffer, fileName, mimetype)=>{
     }
   
     return s3.send(new PutObjectCommand(uploadParams));
-  } 
+  }
+  
+  export const deleteFile=(fileName)=>{
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: fileName,
+    }
+  
+    return s3.send(new DeleteObjectCommand(deleteParams));
+  }
   
 
-export const updateProfile = async (req,res,next)=>{
+// update profile---------------------
+
+export const updateProfile = async (req, res, next) => {
+    console.log(req.body);
     try {
-        const checkboxValues = req.body.checkbox.split(',');
-console.log(checkboxValues);
-        if(req.file){
-            const file = req.file
-            const imageName = randomName()
-    
-            const fileBuffer = await sharp(file.buffer)
-              .resize({ height: 1000, width: 1000, fit: "contain" })
-              .toBuffer()
-          
-            await uploadFile(fileBuffer, imageName, file.mimetype)
-    
-            await userModel.findOneAndUpdate(
-                { _id: req.body.userId },
-                { name: req.body.name, bio: req.body.about,companyname:req.body.companyname, imageName: imageName,workingOn:checkboxValues },
-                { new: true }
-              );
-                      }else{
-            await userModel.findOneAndUpdate(
-                { _id: req.body.userId },
-                { name: req.body.name, bio: req.body.about,companyname:req.body.companyname,workingOn:checkboxValues },
-                { new: true }
-              );
-        }
-        res.status(201).json({created:true})
-    } catch (error) {
-        console.log(error);
-        res.status(500).json(error)
+    //   const checkboxValues = req.body.checkbox.split(',');
+  
+      const updateData = {};
+  
+      if (req.body.name !== '') {
+        updateData.name = req.body.name;
+      }
+  
+      if (req.body.email !== '') {
+        updateData.email = req.body.email;
+      }
+  
+      if (req.body.phone !== '') {
+        updateData.phone = req.body.phone;
+      }
+  
+      if (req.file) {
+        const file = req.file;
+        const imageName = randomName();
+  
+        const fileBuffer = await sharp(file.buffer)
+          .resize({ height: 1000, width: 1000, fit: "contain" })
+          .toBuffer();
+  
+        await uploadFile(fileBuffer, imageName, file.mimetype);
+  
+        updateData.imageName = imageName;
+      }
+  
+      if (req.body.about !== '') {
+        updateData.bio = req.body.about;
+      }
+  
+      if (req.body.companyname !== '') {
+        updateData.companyname = req.body.companyname;
+      }
+  
+      if (req.body.checkbox.length > 0) {
+        updateData.workingOn = req.body.checkbox;
+      } else {      
+      // Retrieve the previous checkbox values and assign them if no checkboxes are selected
+      const user = await userModel.find({ _id: req.body.userId });
+            updateData.workingOn = user.workingOn;
     }
-}
+
+    await userModel.findOneAndUpdate(
+      { _id: req.body.userId },
+      { $set: updateData },
+      { new: true }
+    );
+
+    res.status(201).json({ created: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+  
 
 // -------------------getPost-------------------------
 
@@ -236,10 +274,14 @@ export const userProfileData=async(req,res,next)=>{
 // get user---------------------------
 
 export const userData=async (req,res,next)=>{
-    console.log(req.params.id);
+    console.log(req.body);
 }
 
+export const getUsername=async (req,res,next)=>{
 
+    const userName = await userModel.find({ _id: req.body.userId });
+    res.status(200).json({name:userName[0].name});
+}
 export const getOtpPh=async (req,res,next)=>{
     const number=req.body.ph
     const splitNumber=number.slice(-10)
@@ -263,45 +305,41 @@ export const getOtpPh=async (req,res,next)=>{
     }
 }
 
-// export const updateProfile=async(req,res,next)=>{
-//     console.log(req.body);
-// }
-
-
 
 
 // ---------------likePost------------
-// module.exports.likePost = async (req,res,next)=>{
-//     try {
-//           let value = null
-//           const userId = req.body.userId;
-//           const notification = "Liked";
-//           const post = await PostModel.findById(req.body.postId)
-//           const senderId = post.userId
-//           const likedPost = post.likes.find((id)=>id == req.body.userId)
-//           if(!likedPost){
-//             post.likes.push(req.body.userId)
+export const likePost = async (req, res, next) => {
+    try {
+      let value = null;
+      const userId = req.body.userId;
+      const notification = "Liked";
   
-//             NotificationModel.create({
-//               userId,
-//               senderId,
-//               notification
-//             })
+      // Find the post by its ID
+      const post = await postModel.findById(req.body.postId);
   
-//             await NotifiCounterModel.updateOne(
-//               { userId: senderId }, 
-//               { $inc: { counter: 1 }}
-//             );
+      // Check if the user has already liked the post
+      const likedPost = post.likes.find((id) => id == req.body.userId);
   
-//             value = {value:true}
-//             }else{
-//             post.likes.pull(req.body.userId)
-//             value = {value:false}
-//           }
-//           post.save()
-//           res.status(201).send({likes:post.likes.length,value})
-//       } catch (error) {
-//           console.log(error);
-//       }
-//   }
+      if (!likedPost) {
+        // User has not liked the post yet, so add the user's ID to the likes array
+        post.likes.push(req.body.userId);
+        value = { value: true };
+      } else {
+        // User has already liked the post, so remove the user's ID from the likes array
+        post.likes.pull(req.body.userId);
+        value = { value: false };
+      }
+  
+      // Save the updated post
+      await post.save();
+  
+      // Send the response with the updated likes count and the like/unlike value
+      res.status(201).send({ likes: post.likes.length, value });
+    } catch (error) {
+      console.log(error);
+      // Handle any errors that occur during the process
+      // You might want to send an error response or call `next` to pass the error to the next middleware
+    }
+  };
+  
 

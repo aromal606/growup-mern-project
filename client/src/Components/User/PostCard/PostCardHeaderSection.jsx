@@ -2,15 +2,61 @@ import React, { useState, useEffect } from "react";
 import Card from "../../../Components/Card/Card";
 import Avatar from "../../../Components/User/Avatar";
 import axios from "axios";
+import NameComponent from "../UserName/NameComponent";
 
-const PostCardHeaderSection = (props) => {
-  const post = props?.posts?.data;
-  const [comment, setComment] = useState("");
+const PostCardHeaderSection = () => {
+  const [like, setLike] = useState(0);
+  const [posts, setPosts] = useState([]);
+  const [likeCount, setLikeCount] = useState();
+  const [isLiked, setIsLiked] = useState(false);
+
+  const [postId, setPostId] = useState();
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/getPosts");
+        setPosts(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const postData = {
+    postId: postId,
+    userId: localStorage.getItem("id"),
+  };
+  console.log(postData);
+  const handleLike = async (postId) => {
+    try {
+      await axios.post("http://localhost:4000/likepost", {
+        postId,
+        userId: localStorage.getItem("id"),
+      });
+
+      // Refresh the posts after liking
+      const response = await axios.get("http://localhost:4000/getPosts");
+      setPosts(response.data);
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(likeCount, "ewwwww");
+  const [commentState, setCommentState] = useState({
+    comment: "",
+    commentValue: "",
+    checkComment: "",
+    showComment: "",
+  });
+
   const [dropDownOpen, setDropdownOpen] = useState(false);
 
   return (
     <>
-      {post?.map((obj) => (
+      {posts?.map((obj) => (
         <div className="flex w-9/12 border grow overflow-hidden">
           <Card>
             <div className="flex gap-3">
@@ -19,11 +65,16 @@ const PostCardHeaderSection = (props) => {
               </div>
               <div className="flex grow items-center">
                 <div className="grow">
-                  <p className="m-3">
-                    <a className="font-semibold">aromal</a> shared a{" "}
-                    <a className="text-blue-600">post</a> 2 hr ago
-                  </p>
+                  <div>
+                    <p className="m-3">
+                      <a className="font-semibold">
+                        <NameComponent userId={obj?.userId} />
+                      </a>{" "}
+                      shared a post 2 hr ago
+                    </p>
+                  </div>
                 </div>
+
                 <div className="">
                   <button onClick={() => setDropdownOpen(!dropDownOpen)}>
                     <svg
@@ -113,9 +164,14 @@ const PostCardHeaderSection = (props) => {
             />
 
             <div className="flex mt-2 p-2 gap-3 items-center">
-              22
+              {obj?.likes?.length}
+
               <div>
-                <button className="">
+                <button
+                  className=""
+                  onClick={() => handleLike(obj._id)}
+                  // Pass postId
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"

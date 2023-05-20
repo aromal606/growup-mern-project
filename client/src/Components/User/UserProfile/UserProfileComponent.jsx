@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 // import { setCheck } from '../../redux/userData'
 import ProfileAvatar from "../Avatar";
 import Card from "../../Card/Card";
-import UpdateProfileComponentUser from "../UpdateProfile/UpdateProfileComponentUser";
 export default function UserProfileComponent({}) {
   const [modal, setModel] = useState();
   const toggleModal = () => {
