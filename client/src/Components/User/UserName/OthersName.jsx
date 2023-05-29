@@ -1,27 +1,22 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
-
-
-const NameComponent = (props) => {
+import axios from "axios";
+const OthersName = (props) => {
   const {posterId} = props;
-
-  // const reUserId = userid?.userId;
-  // console.log(reUserId);
-
-  const [name, setName] = useState();
+    
+  const [name, setName] = useState("");
   const [profilepic, setProfilePic] = useState("");
+  
 
   useEffect(() => {
     const getUserName = async () => {
       const { data } = await axios.get(
-        `http://localhost:4000/getUsername/${posterId}`);
+        `http://localhost:4000/getPosterData/${posterId}`);
       setName(data?.name);
       setProfilePic(data?.profilePic);
     };
     getUserName();
   }, []);
  
-
   return (
     <div className="flex items-center gap-2">
       <div>
@@ -36,7 +31,15 @@ const NameComponent = (props) => {
       </div>
       <div className="">{name}</div>
     </div>
-  );
-};
+  )
+}
 
-export default NameComponent;
+export default OthersName
+
+
+
+
+
+
+
+

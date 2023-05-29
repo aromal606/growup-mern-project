@@ -1,10 +1,10 @@
 import React, { useState, useEffect, memo } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Card from "../../Card/Card";
 
-function UserProfileComponent({}) {
-  const id = localStorage.getItem("id");
+function ProfileComponent({}) {
+const {id}=useParams()
   const [modal, setModel] = useState();
   const [posts, setPosts] = useState([]);
   const toggleModal = () => {
@@ -13,10 +13,10 @@ function UserProfileComponent({}) {
   const [details, setDetails] = useState();
 
   useEffect(() => {
+    console.log("hiii");
     console.log(id);
     (async () => {
       const response = await axios.get(`http://localhost:4000/getprofile/${id}`);
-      console.log(response,"iiiii");
       setDetails(response.data);
     })();
   }, []);
@@ -58,7 +58,7 @@ function UserProfileComponent({}) {
                     <p className="font-semibold md:text-2xl text-xl">{data.name}</p>
                     <Link to={"/updateprofile"}>
                       <button className="bg-blue-500 hover:bg-blue-700 text-white mt-3 font-bold py-2 px-4 rounded-full">
-                        edit
+                        follow
                       </button>
                     </Link>
                   </div>
@@ -77,7 +77,7 @@ function UserProfileComponent({}) {
                     <div className="post">
                       <h1 className="font-semibold text-lg">Following</h1>
                       <h1 className="font-semibold text-slate-700 text-center text-sm">
-                        {data.followings.length}
+                      {data.followings.length}
 
                       </h1>
                     </div>
@@ -105,4 +105,4 @@ function UserProfileComponent({}) {
   );
 }
 
-export default memo(UserProfileComponent);
+export default memo(ProfileComponent);

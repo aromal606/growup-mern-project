@@ -10,7 +10,7 @@ const LeftSideBarComponent = () => {
   };
   return (
     <>
-      <div className=" gap-3 flex-col p-3 mt-5 sticky bg-gray-200 shadow w-60">
+      <div className=" gap-3 flex-col  p-3 mt-14 bg-gray-200 shadow w-60">
         <div className="">
           <div className="flex items-center"></div>
           <div className="flex-1">
@@ -91,6 +91,7 @@ const LeftSideBarComponent = () => {
                   <span>Chat</span>
                 </a>
               </li>
+              <Link to="/userslist">
               <li className="rounded-sm hover:scale-110 hover:bg-gray-300 dark:hover:bg-gray-400">
                 <a
                   href="#"
@@ -111,9 +112,11 @@ const LeftSideBarComponent = () => {
                     />
                   </svg>
 
-                  <span>Create</span>
+                  <span>Friends</span>
                 </a>
               </li>
+              </Link>
+
               <li className="rounded-sm hover:scale-110 hover:bg-gray-300 dark:hover:bg-gray-400">
                 <a
                   href="#"

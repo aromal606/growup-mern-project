@@ -1,35 +1,24 @@
 import React, { useState, useEffect } from "react";
-import Card from "../../../Components/Card/Card";
 import axios from "axios";
+import Card from "../../Card/Card";
+import NameComponent from "../UserName/NameComponent";
+import CommentCountComponent from "../PostCard/CommentCountComponent";
 import ReactTimeago from "react-timeago";
-import OthersName from "../UserName/OthersName";
-import ReplyComponent from "./ReplyComponent";
-import { Link, useNavigate } from "react-router-dom";
-import authApi from "../../../API/axiosApi";
-import Swal from "sweetalert2";
-import ComenterName from "../UserName/ComenterName";
-const { deletePost } = authApi();
-const PostCardHeaderSection = (props) => {
+import ReplyComponent from "../PostCard/ReplyComponent";
+import { Link } from "react-router-dom";
+const UserPosts = () => {
+  const id = localStorage.getItem("id");
   const [posts, setPosts] = useState([]);
-  const [deletePosts, setDeletePost]=useState(false)
-  const [isLiked, setIsLiked] = useState(false);
+  const [dropDownOpen, setDropdownOpen] = useState(false);
   const [postId, setPostId] = useState();
   const [postIdSetter, setPostIdSetter] = useState();
+
   const [commentValue, setCommentValue] = useState("");
   const [showComment, setShowComment] = useState();
   const [triggerEffect, setTriggerEffect] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(
-    Array(posts.length).fill(false)
-  );
-  const userId = localStorage.getItem("id");
+  console.log(triggerEffect);
 
-  const toggleDropdown = (postId) => {
-    setDropdownOpen((prevDropdownOpen) => ({
-      ...prevDropdownOpen,
-      [postId]: !prevDropdownOpen[postId],
-    }));
-  };
+  const [showModal, setShowModal] = useState(false);
 
   const reTriggerEffect = () => {
     setTriggerEffect((prevState) => !prevState);
@@ -38,7 +27,11 @@ const PostCardHeaderSection = (props) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/getPosts");
+        const response = await axios.get(
+          `http://localhost:4000/getUserPosts/${id}`
+        );
+        console.log(response.data, "rrr");
+
         setPosts(response.data);
       } catch (error) {
         console.error(error);
@@ -46,7 +39,7 @@ const PostCardHeaderSection = (props) => {
     };
 
     fetchPosts();
-  }, [props.updateComponent,deletePosts]);
+  }, []);
 
   useEffect(() => {
     const fetchComment = async () => {
@@ -55,6 +48,7 @@ const PostCardHeaderSection = (props) => {
           "http://localhost:4000/comment/getComment",
           { postId: postIdSetter }
         );
+        console.log(response, "response");
         setShowComment(response.data);
         if (postIdSetter === postId && typeof onCommentAdded === "function") {
           onCommentAdded();
@@ -66,12 +60,6 @@ const PostCardHeaderSection = (props) => {
 
     fetchComment();
   }, [postIdSetter, triggerEffect]);
-
-  const onCommentAdded = () => {
-    console.log("hii");
-    // Handle the comment added event here
-    // perform any necessary actions, such as updating the comment count
-  };
 
   const handleLike = async (postId) => {
     try {
@@ -104,62 +92,18 @@ const PostCardHeaderSection = (props) => {
     setCommentValue("");
   };
 
-  const postDelete = async (postId) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await deletePost(postId);
-          if (response.status === 200) {
-            Swal.fire(
-              'Deleted!',
-              'Your file has been deleted.',
-              'success'
-            );
-           setDeletePost(response.status)
-          //  setDropdownOpen(false)
-          } else {
-            Swal.fire({
-              title: 'Error!',
-              text: 'An error occurred while deleting the post.',
-              icon: 'error',
-              confirmButtonText: 'Ok'
-            });
-          }
-        } catch (error) {
-          console.log(error);
-          Swal.fire({
-            title: 'Error!',
-            text: 'An error occurred while deleting the post.',
-            icon: 'error',
-            confirmButtonText: 'Ok'
-          });
-        }
-      }
-    });
-  };
-  
-
   return (
     <>
-      {posts?.map((obj, index) => (
-        <div className="flex w-full grow overflow-hidden">
+      {posts?.map((obj) => (
+        <div className="flex  grow overflow-hidden">
           <Card>
             <div className="flex gap-2 ">
-              <div className="p-1"></div>
               <div className="flex grow items-center ">
                 <div className="grow">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                     <Link to="/userProfile">
                       <a className="font-semibold">
-                        <OthersName posterId={obj.userId}  />
+                        <NameComponent posterId={obj?.userId} />
                       </a>
                     </Link>
                     <div className=" text-gray-500">
@@ -167,8 +111,9 @@ const PostCardHeaderSection = (props) => {
                     </div>
                   </div>
                 </div>
+
                 <div className="">
-                  <button onClick={() => toggleDropdown(index)}>
+                  <button onClick={() => setDropdownOpen(!dropDownOpen)}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -185,68 +130,60 @@ const PostCardHeaderSection = (props) => {
                     </svg>
                   </button>
                   <div className="absolute m-2">
-                    {dropdownOpen[index] && (
+                    {dropDownOpen && (
                       <Card>
                         <ul className="m-2">
-                          {userId == obj.userId && (
-                            <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
-                                />
-                              </svg>
-                              edit
-                            </li>
-                          )}
-                          {userId === obj.userId && (
-                            <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
-                              <button onClick={() => postDelete(obj._id)}>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  strokeWidth={1.5}
-                                  stroke="currentColor"
-                                  className="w-6 h-6"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                  />
-                                </svg>
-                              </button>
-                              delete
-                            </li>
-                          )}
-                          {userId !== obj.userId && (
-                            <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                                />
-                              </svg>
-                              report
-                            </li>
-                          )}
+                          <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"
+                              />
+                            </svg>
+                            hide
+                          </li>
+                          <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                              />
+                            </svg>
+                            delete
+                          </li>
+                          <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                              />
+                            </svg>
+                            report
+                          </li>
                         </ul>
                       </Card>
                     )}
@@ -254,9 +191,8 @@ const PostCardHeaderSection = (props) => {
                 </div>
               </div>
             </div>
-            <div className="ml-2 mt-2">
-              <p>{obj.content}</p>
-            </div>
+
+            <p>{obj.content}</p>
 
             <img
               className="overflow-hidden w-full object-cover p-1 "
@@ -352,7 +288,7 @@ const PostCardHeaderSection = (props) => {
                               <div className="flex gap-2">
                                 {/* <ProfileImageComponent userId={obj.userId} /> */}
                                 <div className="dark:text-gray-200">
-                                  <ComenterName comenterid={obj.commenterId} />
+                                  <NameComponent posterId={obj.commenterId} />
                                   <p>{obj.comment}</p>
                                 </div>
                               </div>
@@ -361,7 +297,6 @@ const PostCardHeaderSection = (props) => {
                               </div>
                             </div>
                             <ReplyComponent commentId={obj._id} />
-                            {console.log(obj)}
                           </div>
                         ))}
                       </div>
@@ -386,4 +321,4 @@ const PostCardHeaderSection = (props) => {
   );
 };
 
-export default PostCardHeaderSection;
+export default UserPosts;

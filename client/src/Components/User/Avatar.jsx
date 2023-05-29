@@ -1,6 +1,7 @@
 import React from 'react'
 
 const Avatar = () => {
+  const userId=localStorage.getItem("id")
   return (
     
        <div className="w-14 grow rounded-full h-14 overflow-hidden">

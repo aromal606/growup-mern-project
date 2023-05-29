@@ -5,11 +5,11 @@ const NavigationBarComponent = () => {
 
   const logout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate=("/login");
   };
   return (
     <>
-      <div className="bg-gradient-to-bl top-0 left-0 w-full z-10 ">
+      <div className="bg-gradient-to-l from-indigo-200 via-blue-400 to-white fixed shadow-lg top-0 left-0 w-full z-10  ">
         <div className="max-w-screen-full  flex flex-wrap justify-around mx-auto p-4">
           <div className="">
 
@@ -22,30 +22,7 @@ const NavigationBarComponent = () => {
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span>
           </a>
           </div>
-          <div className="flex md:order-2 ">
-            <button className="rounded-sm hover:scale-110 hover:bg-gray-300 dark:hover:bg-gray-400">
-              <a
-                href="#"
-                className="flex items-center p-2 space-x-3 rounded-md"
-                onClick={logout}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                  />
-                </svg>
-                <span>Logout</span>
-              </a>
-            </button>
+          <div className="flex md:order-2 gap-2">
             <button
               type="button"
               data-collapse-toggle="navbar-search"
@@ -114,6 +91,30 @@ const NavigationBarComponent = () => {
                 ></path>
               </svg>
             </button>
+            <button className="rounded-sm hover:scale-110 ">
+              <a
+                href="#"
+                className="flex items-center p-2 space-x-3 rounded-md"
+                onClick={logout}
+              >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                    />
+                  </svg>
+               {/* put icon svg */}
+                
+              </a>
+            </button>
           </div>
           <div
             className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
@@ -144,11 +145,11 @@ const NavigationBarComponent = () => {
             </div>
             <div className="">
 
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium  -gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:-gray-700">
+            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium  -gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:-0  dark:bg-gray-800 md:dark:bg-gray-900 dark:-gray-700">
               <li className="">
                 <a
                   href="#"
-                  className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500"
+                  className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-white md:p-0 md:dark:text-blue-500"
                   aria-current="page"
                 >
                   Home
@@ -157,7 +158,7 @@ const NavigationBarComponent = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
+                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
                 >
                   Chat
                 </a>
@@ -165,7 +166,7 @@ const NavigationBarComponent = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
+                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
                 >
                   Friends
                 </a>
@@ -173,7 +174,7 @@ const NavigationBarComponent = () => {
               <li>
                 <a
                   href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
+                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
                 >
                   Services
                 </a>

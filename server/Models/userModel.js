@@ -35,6 +35,14 @@ const userSchema = new mongoose.Schema({
         required: [true, "choose one"],
 
     },
+    followers:{
+        type:Array,
+        default:[]
+    },
+    followings:{
+        type:Array,
+        default:[]
+    }
 })
 userSchema.pre("save", async function (next) {
     const salt = await bcrypt.genSalt()

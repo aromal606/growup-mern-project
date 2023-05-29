@@ -4,6 +4,7 @@ import LeftSideBarComponent from "../../Components/User/Leftsidebar/LeftSideBarC
 import Card from "../../Components/Card/Card";
 import NavigationBarComponent from "../../Components/User/Navigationbar/NavigationBarComponent";
 import axios from "axios";
+import UserPosts from "../../Components/User/Posts/UserPosts";
 const UserProfilePage = () => {
   const [posts, setPosts] = useState("");
   useEffect(() => {
@@ -14,7 +15,7 @@ const UserProfilePage = () => {
     postGetting();
   }, []);
   return (
-    <div className="grow h-screen overflow-hidden">
+    <div className="grow h-screen ">
       <Card>
         <NavigationBarComponent />
       </Card>
@@ -23,10 +24,13 @@ const UserProfilePage = () => {
         <div className="md:-mt-5 hidden md:block">
           <LeftSideBarComponent />
         </div>
-        <div className="grow overflow-x-scroll">
+        <div className="grow overflow-x-scroll scrollbar-hide">
+          <div className="overflow-hidden">
           <UserProfileComponent />
+
+          </div>
           <div className="h-screen bg-red-200">
-            {/* <PostCardHeaderSection/> */}
+            <UserPosts />
           </div>
         </div>
       </div>

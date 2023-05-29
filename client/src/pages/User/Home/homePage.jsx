@@ -6,60 +6,74 @@ import NavigationBarComponent from "../../../Components/User/Navigationbar/Navig
 import PostSharingComponent from "../../../Components/User/PostSharing/PostSharingComponent";
 import PostCardHeaderSection from "../../../Components/User/PostCard/PostCardHeaderSection";
 import Card from "../../../Components/Card/Card";
-import {useSelector} from 'react-redux'
-const homePage = () => {
-  const user = useSelector((state)=>state.auth)
-  console.log(user,"user");
+import { useSelector } from "react-redux";
+import RightSideBarComponent from "../../../Components/User/Rigthsidebar/RightSideBarComponent";
+
+const HomePage = () => {
+  const user = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const userType = localStorage.getItem("usertype");
 
-  const [posts, setPosts] = useState("");
-  useEffect(() => {
-    const postGetting = async () => {
-      const postedData = await axios.get("http://localhost:4000/getPosts");
-      setPosts(postedData);
-    };
-    postGetting();
-  }, []);
+  const [posts, setPosts] = useState([]);
+  const [sharedPosts, setSharedPosts] = useState([]);
 
   useEffect(() => {
-    if (token) {
-      if (userType == "client") {
-        navigate("/home");
-      }
-      if (userType == "freelancer") {
-        navigate("/home");
-      }
-    }else{
+    if (!token) {
       navigate("/login");
-
+    } else if (userType === "client" || userType === "freelancer") {
+      navigate("/home");
     }
-  }, [token]);
+  }, [token, navigate, userType]);
+
+  const handlePostShare = async (sharedPost) => {
+    console.log(sharedPost,"sharedPost");
+    try {
+      const response = await axios.post("http://localhost:4000/userPostShare", sharedPost);
+      console.log(response,"22222222");
+      setSharedPosts((prevSharedPosts) => [...prevSharedPosts, response.data]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/getPosts");
+        setPosts(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <>
-    <Card>
-<div >
+      <Card>
+        <div className="">
+          <NavigationBarComponent />
+        </div>
+      </Card>
+      <div className="grow flex max-w-8xl mx-auto gap-2 h-screen ">
+        <div></div>
+        <div className="hidden gap- sm:block grow ">
+          <LeftSideBarComponent />
+        </div>
+        <div className="grow relative">
+          <PostSharingComponent onPostShare={handlePostShare} />
+        </div>
+        <div className=" flex ">
+          <div className="w-1/3 ">
+          <RightSideBarComponent />
 
-    <NavigationBarComponent/>
-</div>
-    </Card>
-        <div className="grow flex max-w-8xl mx-auto gap-2 border h-screen ">
-          <div>
-            
-          </div>
-          <div className="hidden sm:block grow  ">
-            <LeftSideBarComponent />
-          </div>
-          <div className="grow  overflow-x-auto ">
-            <PostSharingComponent />
-            {posts && <PostCardHeaderSection posts={posts} />}
           </div>
         </div>
-   
+      </div>
     </>
   );
 };
 
-export default homePage;
+export default HomePage;

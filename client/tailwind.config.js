@@ -7,7 +7,9 @@ export default {
   theme: {
     extend: {
       transform: ['hover', 'focus'],
+      
     },
   },
+  
   plugins: [],
 }

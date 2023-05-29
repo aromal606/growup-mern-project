@@ -4,13 +4,11 @@ import loginAnimation from '../../../../src/Animation/loginAnimation.json'
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import loginImg from "../../../assets/images/4204968.jpg";
 import logo from "../../../assets/images/talentF-c.png";
-import authAPI from "../../../API/authApi";
-import axiosConfig from "../../../config/axiosConfig";
+import axiosApi from "../../../API/axiosApi";
 import {setLogin} from '../../../../redux/features/authSlice'
 const login = () => {
-  const token = localStorage.getItem("jwt");
+  const token = localStorage.getItem("token");
   const usertype = localStorage.getItem("usertype");
   const navigate = useNavigate();
   const initialValues = { email: "", password: "" };
@@ -18,7 +16,7 @@ const login = () => {
   const [formError, setFormError] = useState("");
   const [user, setUser] = useState();
   const dispatch = useDispatch();
-  const { login } = authAPI();
+  const { login } = axiosApi();
   useEffect(() => {
     if (token) {
       if (usertype == "client") {
