@@ -8,7 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import { auth } from "../../../API/firebase";
 import { RecaptchaVerifier } from "firebase/auth";
 import { Toaster } from "react-hot-toast";
-import { ToastContainer,toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { signInWithPhoneNumber } from "firebase/auth";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -40,22 +40,19 @@ export default function OtpLogin() {
       );
   }
 
-  console.log(ph);
-
   const handleSubmit = async (e) => {
+    console.log("hoiii");
     const otpNumbet = ph;
     e.preventDefault();
     try {
-      const {data} = await axios.post("http://localhost:4000/otp_login", {
+      const { data } = await axios.post("http://localhost:4000/otp_login", {
         ph: ph,
       });
       if (data) {
-        console.log("-------1---------",data,"-------1---------");
-        console.log("-------1---------",data.token,"-------1---------");
-        localStorage.setItem('token',data.token)
-         
-        if (data.errors) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("id", data.verifyNumber._id);
 
+        if (data.errors) {
           toast.error(data.errors, {
             position: "top-center",
             autoClose: 5000,
@@ -69,10 +66,10 @@ export default function OtpLogin() {
 
           console.log(data.errors, "data.errors");
         } else {
-            console.log("otp success data", data);
+          console.log("otp success data", data);
 
           onSignup();
-          onOTPVerify()
+          onOTPVerify();
         }
       }
     } catch (error) {
@@ -102,11 +99,11 @@ export default function OtpLogin() {
         window.confirmationResult = confirmationResult;
         setLoading(false);
         setShowOTP(true);
-        toast.success("OTP sended successfully! fgdg");
+        toast.success("OTP sended successfully");
       })
       .catch((error) => {
-        toast.error("error dfgdfg");
-
+        // toast.error("error dfgdfg");
+console.log(error,"from otp login");
         setLoading(false);
         console.log(error);
       });
@@ -117,14 +114,13 @@ export default function OtpLogin() {
     window.confirmationResult
       .confirm(otp)
       .then(async (res) => {
-
         setUser(res.user);
         setLoading(false);
         navigate("/home");
       })
       .catch((err) => {
         console.log(err);
-        toast.error("invalid verification code")
+        toast.error("invalid verification code");
         setLoading(false);
       });
   }
@@ -132,7 +128,7 @@ export default function OtpLogin() {
   return (
     <section className="flex items-center bg-gray-600 justify-center h-screen">
       <div>
-        <ToastContainer/>
+        <ToastContainer />
         <Toaster toastOptions={{ duration: 4000 }} />
         <div id="recaptcha-container"></div>
         {user ? (

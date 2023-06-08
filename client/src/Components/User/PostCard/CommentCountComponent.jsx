@@ -6,11 +6,8 @@ const CommentCountComponent = ({ postId, onCommentAdded }) => {
 
   const getCommentCount = async () => {
     try {
-       await axios.post("http://localhost:4000/comment/commentCount", { postId: postId }).then(({data})=>{
-        setCount(data)
-    
-
-       })
+      const { data } = await axios.post("http://localhost:4000/comment/commentCount", { postId: postId });
+      setCount(data);
     } catch (error) {
       console.log(error)
     }
@@ -19,17 +16,22 @@ const CommentCountComponent = ({ postId, onCommentAdded }) => {
   useEffect(() => {
     getCommentCount()
   }, [postId])
- 
 
- 
+  useEffect(() => {
+    if (onCommentAdded) {
+      // If the onCommentAdded prop is provided, call it to update the comment count
+      onCommentAdded(count);
+    }
+  }, [count, onCommentAdded]);
 
   return (
     <div>
+      <p>
       {count}
+
+      </p>
     </div>
   )
 }
 
 export default CommentCountComponent
-
-

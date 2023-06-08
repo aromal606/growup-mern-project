@@ -5,7 +5,7 @@ const NavigationBarComponent = () => {
 
   const logout = () => {
     localStorage.clear();
-    navigate=("/login");
+    navigate("/login");
   };
   return (
     <>

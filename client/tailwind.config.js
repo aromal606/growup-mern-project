@@ -9,6 +9,10 @@ export default {
       transform: ['hover', 'focus'],
       
     },
+     widths: {
+        'small': '20rem',  // Customize the width for sm size (small)
+      
+      },
   },
   
   plugins: [],

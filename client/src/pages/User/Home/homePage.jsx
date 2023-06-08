@@ -59,14 +59,14 @@ const HomePage = () => {
       </Card>
       <div className="grow flex max-w-8xl mx-auto gap-2 h-screen ">
         <div></div>
-        <div className="hidden gap- sm:block grow ">
+        <div className="hidden sm:block grow ">
           <LeftSideBarComponent />
         </div>
         <div className="grow relative">
           <PostSharingComponent onPostShare={handlePostShare} />
         </div>
-        <div className=" flex ">
-          <div className="w-1/3 ">
+        <div className=" flex">
+          <div className="w-1/3 sm:block ">
           <RightSideBarComponent />
 
           </div>

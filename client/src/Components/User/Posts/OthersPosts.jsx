@@ -6,8 +6,9 @@ import CommentCountComponent from "../PostCard/CommentCountComponent";
 import ReactTimeago from "react-timeago";
 import ReplyComponent from "../PostCard/ReplyComponent";
 import { Link } from "react-router-dom";
-const UserPosts = () => {
-  const id = localStorage.getItem("id");
+const OthersPosts = (props) => {
+  const { id } = props; 
+  
   const [posts, setPosts] = useState([]);
   const [dropDownOpen, setDropdownOpen] = useState(false);
   const [postId, setPostId] = useState();
@@ -29,7 +30,6 @@ const UserPosts = () => {
         const response = await axios.get(
           `http://localhost:4000/getUserPosts/${id}`
         );
-        console.log(response.data, "rrr");
 
         setPosts(response.data);
       } catch (error) {
@@ -67,7 +67,7 @@ const UserPosts = () => {
       });
 
       // Refresh the posts after liking
-      const response = await axios.get(`http://localhost:4000/getUserPosts/${id}`);
+      const response = await axios.get("http://localhost:4000/getPosts");
       setPosts(response.data);
       setIsLiked(!isLiked);
     } catch (error) {
@@ -319,4 +319,4 @@ const UserPosts = () => {
   );
 };
 
-export default UserPosts;
+export default OthersPosts;

@@ -3,6 +3,7 @@ import cors from 'cors'
 import { connect } from 'mongoose'
 import authRoute from "./Routes/authRoutes.js"
 import commentRoute from "./Routes/commentRoute.js"
+import adminAuthRoute from './Routes/adminroutes/adminAuthRoute.js'
 const app = express()
 import cookieParser from "cookie-parser"
 import bodyParser from "body-parser";
@@ -33,3 +34,4 @@ app.use(cookieParser())
 app.use(json());
 app.use("/",authRoute)
 app.use("/comment",commentRoute)
+app.use("/admin",adminAuthRoute)

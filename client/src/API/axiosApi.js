@@ -1,7 +1,6 @@
 import  axiosConfig from '../config/axiosConfig'
 const axiosApi = ()=>{
     const login = async (logindata) =>{
-        console.log(logindata,"p");
         try{
            const response = await axiosConfig.post('/login', logindata)
            console.log('looo', response);
@@ -39,9 +38,64 @@ const axiosApi = ()=>{
             throw{msg:error.message}
         }
     }
+    const getFollowers=async(id)=>{
+        try {
+            const response=await axiosConfig.get(`/getFollowers/${id}`)
+            return response
+        } catch (error) {
+            throw{msg:error.message}
+            
+        }
+    }
+    const getFollowings=async(id)=>{
+        try {
+            const response=await axiosConfig.get(`getFollowings/${id}`)
+            return response
+        } catch (error) {
+            throw{msg:error.message}
+            
+        }
+    }
+    const unFollowUser=async(id,myId)=>{
+        console.log(id,myId,"UnFollowUser axiosApi");
+
+        try {
+            const response=await axiosConfig.post(`unFollowUser/${id}`,{myId})
+            return response
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const followUser=async(id,myId)=>{
+        console.log(id,myId);
+        try {
+            const response=await axiosConfig.post(`followUsers/${id}`,{myId})
+            console.log(response,"axiosApi");
+            return response
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const getNotification=async(id)=>{
+        try {
+            const response=await axiosConfig.get(`/getnotification/${id}`)
+            return response
+        } catch (error) {
+           console.log(error); 
+        }
+    }
+
+    const getAllUsers=async(id)=>{
+        try {
+            const response=await axiosConfig.get(`/getallusers/${id}`)
+            return response
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
-    return { login, verifyEmail, sharePost, deletePost }
+    return { login, verifyEmail, sharePost, deletePost, getFollowers, getFollowings, unFollowUser, followUser, getNotification, getAllUsers }
 }
 
 export default axiosApi;

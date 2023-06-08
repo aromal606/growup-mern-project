@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import UserProfileComponent from "../../Components/User/UserProfile/UserProfileComponent";
-import LeftSideBarComponent from "../../Components/User/Leftsidebar/LeftSideBarComponent";
-import Card from "../../Components/Card/Card";
-import NavigationBarComponent from "../../Components/User/Navigationbar/NavigationBarComponent";
+import UserProfileComponent from "../../../Components/User/UserProfile/UserProfileComponent";
+import LeftSideBarComponent from "../../../Components/User/Leftsidebar/LeftSideBarComponent";
+import Card from "../../../Components/Card/Card";
+import NavigationBarComponent from "../../../Components/User/Navigationbar/NavigationBarComponent";
 import axios from "axios";
-import UserPosts from "../../Components/User/Posts/UserPosts";
+import UserPosts from "../../../Components/User/Posts/UserPosts";
 const UserProfilePage = () => {
+  // const { id } = useParams();
   const [posts, setPosts] = useState("");
   useEffect(() => {
     const postGetting = async () => {
-      const postedData = await axios.get("http://localhost:4000/getPosts");
+      const postedData = await axios.get(`http://localhost:4000/getUserPosts/${id}`);
       setPosts(postedData);
     };
     postGetting();

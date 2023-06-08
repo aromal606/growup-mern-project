@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Field, Form, Formik } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import profilepicture from '../../../../src/userimages/userprofileimage.png'
 const UpdateProfileComponent = () => {
   const id = localStorage.getItem("id");
   const [userData, setUserData] = useState({});
@@ -11,7 +12,6 @@ const UpdateProfileComponent = () => {
         const response = await axios.get(
           `http://localhost:4000/getprofile/${id}`
         );
-        console.log(response.data, "22");
         if (response.data.length > 0) {
           setUserData(response.data[0]); // Access the first element of the array
         }
@@ -35,21 +35,38 @@ const UpdateProfileComponent = () => {
     checkbox: "",
   };
   const onSubmit = async (values) => {
-    console.log(values.checkbox);
     const formData = new FormData();
-    console.log(imagePreview, "2");
-    formData.append("profilepicture", imagePreview);
+  
+    if (!imagePreview) {
+      // Set a predefined image URL here
+      const predefinedImageURL = profilepicture
+  
+      // Create a new Blob object from the predefined image URL
+      const predefinedImageBlob = await fetch(predefinedImageURL).then((res) =>
+        res.blob()
+      );
+      formData.append("profilepicture", predefinedImageBlob);
+    } else {
+      console.log(values.checkbox);
+      console.log(imagePreview, "2");
+      formData.append("profilepicture", imagePreview);
+    }
+  
+    // Append other form fields to formData
     formData.append("name", values.name);
     formData.append("email", values.email);
     formData.append("about", values.about);
     formData.append("companyname", values.companyname);
     formData.append("checkbox", values.checkbox);
     formData.append("userId", id);
+  
     console.log(formData);
+  
     const response = await axios.post(
       "http://localhost:4000/updateprofile",
       formData
     );
+  
     try {
       if (response) {
         if (response.status === 201) {
@@ -63,8 +80,8 @@ const UpdateProfileComponent = () => {
     } catch (error) {
       console.log(error);
     }
-
   };
+  
   return (
     <Formik
       initialValues={initialValues}

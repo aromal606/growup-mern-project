@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ColorRingLoader from "./Components/Loader/ColorRingLoader";
+import "react-toastify/dist/ReactToastify.css"
 
 const Landingpage = lazy(() => import('./pages/User/LandingPage/Landingpage'));
 const Login = lazy(() => import('./pages/User/Login/Login'));
@@ -10,11 +11,13 @@ const Register = lazy(() => import('./pages/User/SignUp/Register'));
 const Logout = lazy(() => import('./pages/Logout'));
 const HomePage = lazy(() => import('./pages/User/Home/homePage'));
 const OtpLogin = lazy(() => import('./Components/User/OtpSection/OtpLogin'));
-const UserProfilePage = lazy(() => import('./pages/UserProfilePage/UserProfilePage'));
+const UserProfilePage = lazy(() => import('./pages/User/UserProfilePage/UserProfilePage'));
 const UpdateProfilePage = lazy(() => import('./pages/User/UpdateProfilePage/UpdateProfilePage'));
 const UpdateProfileComponentUser = lazy(() => import('./Components/User/UpdateProfile/UpdateProfileComponentUser'));
 const UsersListPage = lazy(()=> import('./pages/User/UsersList/UsersListPage'))
 const OtherProfile=lazy(()=> import('./Components/User/UserProfile/ProfileComponent'))
+const NotificationPage=lazy(()=>import('./pages/User/notificationpage/NotificationPage'))
+const OtherProfilePage=lazy(()=>import('./pages/User/UserProfilePage/OtherProfilePage'))
 const App = () => {
 
   return (
@@ -57,7 +60,7 @@ const App = () => {
           } />
         <Route exact path="/otherProfile/:id" element={
             <Suspense fallback={<ColorRingLoader />}>
-              <OtherProfile />
+              <OtherProfilePage />
             </Suspense>
           } />
 
@@ -72,6 +75,12 @@ const App = () => {
               <UsersListPage />
             </Suspense>
           } />
+          <Route exact path="/notification" element={
+            <Suspense fallback={<ColorRingLoader />}>
+              <NotificationPage />
+            </Suspense>
+          } />
+          
       </Routes>
     </BrowserRouter>
   );

@@ -9,7 +9,7 @@ module.exports.checkUser = (req, res, next) => {
                 res.json({status:false});
                 next();
             }else{
-                const user = await User.findById(decodedToken.id);
+                const user = await userModel.findById(decodedToken.id);
                 if(user){
                     res.json({status:true,user:user})
                 }else{

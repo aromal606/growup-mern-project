@@ -13,10 +13,8 @@ function UserProfileComponent({}) {
   const [details, setDetails] = useState();
 
   useEffect(() => {
-    console.log(id);
     (async () => {
       const response = await axios.get(`http://localhost:4000/getprofile/${id}`);
-      console.log(response,"iiiii");
       setDetails(response.data);
     })();
   }, []);

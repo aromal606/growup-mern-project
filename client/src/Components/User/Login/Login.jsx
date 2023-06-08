@@ -1,36 +1,36 @@
 import React, { useEffect, useState } from "react";
-import Lottie from 'lottie-react'
-import loginAnimation from '../../../../src/Animation/loginAnimation.json'
+import Lottie from "lottie-react";
+import loginAnimation from "../../../../src/Animation/loginAnimation.json";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../../../assets/images/talentF-c.png";
 import axiosApi from "../../../API/axiosApi";
-import {setLogin} from '../../../../redux/features/authSlice'
-const login = () => {
+import { setLogin } from "../../../../redux/features/authSlice";
+
+const Login = () => {
+  // Rename the function to Login (capitalized)
   const token = localStorage.getItem("token");
   const usertype = localStorage.getItem("usertype");
   const navigate = useNavigate();
   const initialValues = { email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formError, setFormError] = useState("");
-  const [user, setUser] = useState();
   const dispatch = useDispatch();
-  const { login } = axiosApi();
+  const { login: apiLogin } = axiosApi(); // Rename the constant to apiLogin
+
   useEffect(() => {
     if (token) {
-      if (usertype == "client") {
+      if (usertype === "client") {
+        // Also, use strict equality (===) instead of loose equality (==)
         navigate("/home");
       }
-      if (usertype == "freelancer") {
+      if (usertype === "freelancer") {
+        // Also, use strict equality (===) instead of loose equality (==)
         navigate("/home");
       }
     }
   }, [token]);
-  const [values, setValues] = useState({
-    email: "",
-    password: "",
-  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +40,6 @@ const login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    console.log({ ...formValues });
     if (!formValues.email) {
       setFormError("email is required");
     } else if (!regex.test(formValues.email)) {
@@ -51,45 +50,31 @@ const login = () => {
       formValues.password.length < 6 ||
       formValues.password.length > 12
     ) {
-      setFormError("Password must be in between 6 to 12 characters");
+      setFormError("Password must be between 6 to 12 characters");
     } else {
       try {
-        console.log(formValues);
-
-        const response = await login(formValues);
-        console.log(response, "qw");
-        if (response.status == 201) {
+        const response = await apiLogin(formValues); // Use the renamed constant apiLogin
+        console.log(response, "login response");
+        if (response.status === 201) {
           toast.error(response.data.message, {
             position: toast.POSITION.TOP_RIGHT,
           });
+          
         }
-        if (response.status == 200) {
-          localStorage.setItem("token",response.data.token)
+        if (response.status === 200) {
+          // Also, use strict equality (===) instead of loose equality (==)
+          localStorage.setItem("token", response.data.token);
           localStorage.setItem("usertype", response.data.user.accounttype);
           localStorage.setItem("id", response.data.user._id);
-          dispatch(setLogin({
-            user:response.data.user._id,
-            username:response.data.user.name,
-            email:response.data.user.email,
-          }))
+          dispatch(
+            setLogin({
+              user: response.data.user._id,
+              username: response.data.user.name,
+              email: response.data.user.email,
+            })
+          );
           navigate("/home");
         }
-        // const {email}=response.user
-        // console.log("---", response, "-----");
-        // localStorage.setItem("jwt", response);
-
-        // if (response) {
-        //   localStorage.setItem("usertype", response.accounttype);
-        //   localStorage.setItem("id", response.user);
-
-        //   setUser(response);
-        //   console.log(response);
-        //   if (response.errors) {
-        //     console.log("error");
-        //   } else {
-        //     navigate("/home");
-        //   }
-        // }
       } catch (error) {
         // toast.error(error.response.response.error, {
         //   position: toast.POSITION.TOP_RIGHT,
@@ -119,9 +104,9 @@ const login = () => {
               <p className="text-xs mt-4 mb-4 text-[#002D74]">
                 If you are already a member, easily log in
               </p>
+        <ToastContainer />
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <ToastContainer />
                 <div className="relative">
                   <input
                     className="peer p-2  rounded-xl border w-full placeholder-transparent text-gray-500 focus:outline-none"
@@ -203,4 +188,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;

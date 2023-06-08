@@ -8,10 +8,11 @@ import { Link, useNavigate } from "react-router-dom";
 import authApi from "../../../API/axiosApi";
 import Swal from "sweetalert2";
 import ComenterName from "../UserName/ComenterName";
+import CommentCountComponent from "./CommentCountComponent"
 const { deletePost } = authApi();
 const PostCardHeaderSection = (props) => {
   const [posts, setPosts] = useState([]);
-  const [deletePosts, setDeletePost]=useState(false)
+  const [deletePosts, setDeletePost] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [postId, setPostId] = useState();
   const [postIdSetter, setPostIdSetter] = useState();
@@ -46,7 +47,7 @@ const PostCardHeaderSection = (props) => {
     };
 
     fetchPosts();
-  }, [props.updateComponent,deletePosts]);
+  }, [props.updateComponent, deletePosts]);
 
   useEffect(() => {
     const fetchComment = async () => {
@@ -68,7 +69,6 @@ const PostCardHeaderSection = (props) => {
   }, [postIdSetter, triggerEffect]);
 
   const onCommentAdded = () => {
-    console.log("hii");
     // Handle the comment added event here
     // perform any necessary actions, such as updating the comment count
   };
@@ -106,46 +106,41 @@ const PostCardHeaderSection = (props) => {
 
   const postDelete = async (postId) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const response = await deletePost(postId);
           if (response.status === 200) {
-            Swal.fire(
-              'Deleted!',
-              'Your file has been deleted.',
-              'success'
-            );
-           setDeletePost(response.status)
-          //  setDropdownOpen(false)
+            Swal.fire("Deleted!", "Your file has been deleted.", "success");
+            setDeletePost(response.status);
+            //  setDropdownOpen(false)
           } else {
             Swal.fire({
-              title: 'Error!',
-              text: 'An error occurred while deleting the post.',
-              icon: 'error',
-              confirmButtonText: 'Ok'
+              title: "Error!",
+              text: "An error occurred while deleting the post.",
+              icon: "error",
+              confirmButtonText: "Ok",
             });
           }
         } catch (error) {
           console.log(error);
           Swal.fire({
-            title: 'Error!',
-            text: 'An error occurred while deleting the post.',
-            icon: 'error',
-            confirmButtonText: 'Ok'
+            title: "Error!",
+            text: "An error occurred while deleting the post.",
+            icon: "error",
+            confirmButtonText: "Ok",
           });
         }
       }
     });
   };
-  
 
   return (
     <>
@@ -157,9 +152,9 @@ const PostCardHeaderSection = (props) => {
               <div className="flex grow items-center ">
                 <div className="grow">
                   <div className="flex items-center gap-2">
-                    <Link to="/userProfile">
+                    <Link to={`/otherProfile/${obj.userId}`}>
                       <a className="font-semibold">
-                        <OthersName posterId={obj.userId}  />
+                        <OthersName posterId={obj.userId} />
                       </a>
                     </Link>
                     <div className=" text-gray-500">
@@ -264,8 +259,8 @@ const PostCardHeaderSection = (props) => {
               alt=""
             />
 
-            <div className="flex mt-2 p-2 gap-3 items-center border">
-              {obj?.likes?.length}
+            <div className="flex mt-2 p-2 gap-3 items-center ">
+              {obj?.likes?.length > 0 ? <div>{obj.likes.length}</div> : null}
               <div>
                 <button
                   className=""
@@ -289,12 +284,12 @@ const PostCardHeaderSection = (props) => {
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <p className="dark:text-gray-200">
-                  {/* <CommentCountComponent
+               
+                  <CommentCountComponent
                     postId={obj._id}
-                    // onCommentAdded={onCommentAdded}
-                  /> */}
-                </p>
+                    onCommentAdded={onCommentAdded}
+                  />
+              
                 <button
                   onClick={() => {
                     setShowModal(true),
@@ -361,7 +356,6 @@ const PostCardHeaderSection = (props) => {
                               </div>
                             </div>
                             <ReplyComponent commentId={obj._id} />
-                            {console.log(obj)}
                           </div>
                         ))}
                       </div>

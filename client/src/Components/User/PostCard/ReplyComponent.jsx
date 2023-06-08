@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import Timeago from "react-timeago";
-// import ProfileImageComponent from '../ProfileImagePage/ProfileImageComponent'
 import NameComponent from "../UserName/NameComponent";
 import axios from "axios";
 
 const ReplyComponent = ({ commentId }) => {
   const [reply, setReply] = useState("");
-  const [replied, setReplied] = useState();
-  const [show, setShow] = useState(false);
-  const user = useSelector((state) => state.user);
+  const [replied, setReplied] = useState([]);
+  const [show, setShow] = useState(false); // Add show state
 
   const replyObj = {
     commentId: commentId,
@@ -17,30 +14,33 @@ const ReplyComponent = ({ commentId }) => {
     comment: reply,
   };
 
-  const handleReply = async () => {
-    
+  const handleReply = async (e) => {
+    e.preventDefault(); // Prevent form submission
     try {
-      await axios.post("http://localhost:4000/comment//sendReply", replyObj);
+      await axios.post("http://localhost:4000/comment/sendReply", replyObj);
+      setReply("");
+      fetchReplyComments(); // Fetch updated reply comments after sending reply
     } catch (error) {
       console.log(error);
     }
   };
 
-  const ReplyComments = async () => {
+  const fetchReplyComments = async () => {
     try {
-      const {data} = await axios.post(
-        "http://localhost:4000/comment//getReplyComments",
+      const { data } = await axios.post(
+        "http://localhost:4000/comment/getReplyComments",
         { commentId: commentId }
-        );
-        setReplied(data);
+      );
+      setReplied(data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    ReplyComments();
-  }, [show]);
+    fetchReplyComments();
+  }, []);
+
   return (
     <>
       <div className="flex justify-end" onClick={() => setShow(!show)}>
@@ -59,16 +59,15 @@ const ReplyComponent = ({ commentId }) => {
           />
         </svg>
       </div>
-      {show ? (
+      {show && ( // Use show state to conditionally render the replied comments section
         <div>
           <div>
             {replied?.map((obj) => (
-              <div className="ml-9 flex justify-between">
+              <div key={obj._id} className="ml-9 flex justify-between">
                 <div className="flex gap-2">
-                  {/* <ProfileImageComponent userId={obj.userId} /> */}
                   <div>
                     <div className="dark:text-gray-200">
-                      <NameComponent userId={obj.userId} />
+                      <NameComponent posterId={obj.userId} />
                     </div>
                     <p className="mb-3 font-light dark:text-gray-200">
                       {obj.comment}
@@ -96,7 +95,7 @@ const ReplyComponent = ({ commentId }) => {
             </div>
           </form>
         </div>
-      ) : null}
+      )}
     </>
   );
 };

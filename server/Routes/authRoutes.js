@@ -1,5 +1,5 @@
-import express, { Router }  from 'express';
-import {login,register,userPostShare,getPosts,getOtpPh, updateProfile, userProfileData, userData, likePost, getUsername, getUserPosts, deletePost, getPosterData, followUser, getSuggestions} from '../Controllers/authController.js'
+import express  from 'express';
+import {login,register,userPostShare,getPosts,getOtpPh, updateProfile, userProfileData, userData, likePost, getUsername, getUserPosts, deletePost, getPosterData, followUser, getSuggestions, getFollowers, getFollowings, unFollowUser, followUsers, getNotification, getAllUsers} from '../Controllers/authController.js'
 const routes=express.Router()
 import multer, { memoryStorage } from 'multer'
 const storage = memoryStorage()
@@ -18,7 +18,13 @@ routes.get("/getUsername/:id",getUsername)
 routes.get("/getPosterData/:id",getPosterData)
 routes.post("/updateprofile",upload.single("profilepicture"),updateProfile)
 routes.post("/likepost",likePost)
-routes.delete('/deletePost/:id',deletePost)
-routes.get("/suggetions/:id",getSuggestions)
+routes.delete('/deletePost/:id',deletePost) 
+routes.get('/getFollowers/:id',getFollowers)
+routes.get('/getFollowings/:id',getFollowings)
+routes.get("/suggestions/:id",getSuggestions)
 routes.put("/:id/follow",followUser)
+routes.post("/followUsers/:id",followUsers)
+routes.post("/unFollowUser/:id",unFollowUser)
+routes.get('/getnotification/:id',getNotification)
+routes.get('/getallusers/:id',getAllUsers)
 export default routes;

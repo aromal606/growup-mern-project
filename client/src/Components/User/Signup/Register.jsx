@@ -35,16 +35,12 @@ function SignUp() {
       );
       if (data) {
         if (data.errors) {
-          console.log(data.errors);
           toast.error(data.errors, {
             position: toast.POSITION.TOP_RIGHT
         });
         } else {
-          console.log(data,"33");
-          console.log(data.user._id,"33");
           localStorage.setItem('id',data.user._id)
           localStorage.setItem('token',data.token)
-          console.log("Registration successful");
           dispatch(setLogin({
             userId:data.user._id,
           }))
