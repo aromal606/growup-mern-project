@@ -8,26 +8,19 @@ dotenv.config();
 import crypto from "crypto";
 import sharp from "sharp";
 import bcrypt from 'bcrypt'
-
-
 import jwt from "jsonwebtoken";
+import { ReportModel } from '../Models/reportModel.js';
 const maxAge = 10 * 24 * 60 * 60
 const createToken = (id) => {
   return jwt.sign({ id }, "jwtsecretkey", {
     expiresIn: maxAge
   })
 }
-
-// ---------creating random names for storing images/videos in s3 bucket-----------
 const randomName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
-// const bucketName = process.env.BUCKET_NAME
-// const bucketRegion = process.env.BUCKET_REGION
-// const accessKey = process.env.ACCESS_KEY
-// const SecretAccessKey = process.env.SECRET_ACCESS_KEY
-const bucketName = 'userpostingdata'
-const bucketRegion = 'ap-south-1'
-const accessKey = 'AKIA4JF6RM5HVIGNXMC4'
-const secretAccessKey = '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'
+const bucketName = process.env.VITE_BUCKET_NAME
+const bucketRegion = process.env.VITE_BUCKET_REGION
+const accessKey = process.env.VITE_ACCESS_KEY
+const secretAccessKey = process.env.VITE_SECRET_ACCESS_KEY
 const s3 = new S3Client({
   region: bucketRegion,
   credentials: {
@@ -35,9 +28,6 @@ const s3 = new S3Client({
     secretAccessKey: secretAccessKey,
   },
 });
-
-
-
 const handleErrors = (err) => {
 
   let errors = { email: "", number: "" }
@@ -57,8 +47,6 @@ const handleErrors = (err) => {
     })
   }
 }
-
-
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -66,119 +54,33 @@ export const login = async (req, res, next) => {
     const token = createToken(user._id);
     res.status(200).json({ user, token });
   } catch (err) {
-    if (err.message === "Incorrect password") {
-      res.status(201).json({ message: "Incorrect password" });
-    } else {
-      res.status(201).json({ message: "Incorrect email" });
-    }
+    res.status(401).json(err.message);
   }
 };
-
-
-
-
-
 export const register = async (req, res, next) => {
   try {
     const { name, email, number, accounttype } = req.body;
     let password = req.body.password;
     const salt = await bcrypt.genSalt();
     password = await bcrypt.hash(password, salt)
-    const user = await userModel.create({ name, email, number, password, accounttype })
+    const user = await userModel.create({ name, email, number, password, accounttype, status:"Active" })
     const token = createToken(user._id)
     res.status(201).json({ user, token })
-    // res.status(201).json({ user: user._id, created: true, accounttype: user.accounttype, email: user.email })
   } catch (err) {
     const errors = handleErrors(err)
     res.json({ errors, created: false })
   }
 }
-
-
-
-// module.exports.register = async (req,res,next)=>{
-
-//   const name = req.body.name
-//   const lastName = req.body.lastName
-//   const email = req.body.email
-//   let password = req.body.password
-//   const phoneno = req.body.phoneno
-//   const status = "Block"
-
-//   try{
-//       if(req.file){
-//           const file = req.file
-//           const imageName = generateFileName()
-
-//           const fileBuffer = await sharp(file.buffer)
-//             .resize({ height: 1000, width: 1000, fit: "contain" })
-//             .toBuffer()
-//           await uploadFile(fileBuffer, imageName, file.mimetype)
-
-//           const salt = await bcrypt.genSalt();
-//           password = await bcrypt.hash(password,salt)
-
-//           const post = await UserModel.create({
-//               name,
-//               lastName,
-//               email,
-//               imageName,
-//               password,
-//               phoneno,
-//               status,
-//           })
-
-//           const token = createToken(post._id);
-
-//               await NotifiCounterModel.create({
-//                   userId:post._id,
-//                   counter:0
-//               })
-
-//               res.cookie("jwt",token,{
-//               withCredentials:true,
-//               httpOnly: false,
-//               maxAge:maxAge*1000
-//           })
-//           res.status(201).json({user:post._id, created:true})
-//       }else{
-//           const imageName = process.env.DEFAULT_IMAGE
-
-//           const salt = await bcrypt.genSalt();
-//           password = await bcrypt.hash(password,salt)
-
-//           const post = await UserModel.create({
-//               name,
-//               lastName,
-//               email,
-//               imageName,
-//               password,
-//               phoneno,
-//               status,
-//           })
-
-//           const token = createToken(post._id);
-
-//           await NotifiCounterModel.create({
-//               userid:post._id,
-//               counter:0
-//           })
-
-//               res.cookie("jwt",token,{
-//               withCredentials:true,
-//               httpOnly: false,
-//               maxAge:maxAge*1000
-//           })
-//           res.status(201).json({user:post._id, created:true}) 
-//       }
-//   }catch(err){
-//       const errors = handleErrors(err)
-//       res.json({errors,created: false})
-//   }
-// }
-
-
-
+ 
+export const verifyUser=async(req,res,next)=>{
+  try {
+    const response=await userModel.findById(req.params.id).exec();
+    res.send ({status:response.status})
+  } catch (error) {
+    throw(error);
+  }
+}
+ 
 
 
 export const userPostShare = async (req, res, next) => {
@@ -227,32 +129,10 @@ export const userPostShare = async (req, res, next) => {
       res.status(201).send(post);
     }
   } catch (error) {
-    console.log(error);
+    throw(error);
     res.status(500).send("Internal Server Error");
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 export const uploadFile = (fileBuffer, fileName, mimetype) => {
 
@@ -263,7 +143,7 @@ export const uploadFile = (fileBuffer, fileName, mimetype) => {
     ContentType: mimetype,
 
   }
-
+ 
   return s3.send(new PutObjectCommand(uploadParams));
 }
 
@@ -321,7 +201,7 @@ export const updateProfile = async (req, res, next) => {
     );
     res.status(201).json({ created: true });
   } catch (error) {
-    console.log(error);
+    throw(error);
     res.status(500).json(error);
   }
 };
@@ -330,7 +210,7 @@ export const updateProfile = async (req, res, next) => {
 
 export const getPosts = async (req, res, next) => {
   try {
-    const posts = await postModel.find({}).sort({ _id: -1 });
+    const posts = await postModel.find({ status: { $ne: "Block" } }).sort({ _id: -1 });
 
     for (let i = 0; i < posts.length; i++) {
       if (posts[i].imageName) {
@@ -343,16 +223,16 @@ export const getPosts = async (req, res, next) => {
         posts[i].imageName = url;
       }
     }
-
+    console.log(posts);
     res.send(posts);
   } catch (error) {
-    console.log(error);
+    throw(error);
     res.status(500).send("Internal Server Error");
   }
 };
 // get profile data--------------------
 
-
+ 
 export const userProfileData = async (req, res, next) => {
 
   try {
@@ -366,13 +246,13 @@ export const userProfileData = async (req, res, next) => {
         const command = new GetObjectCommand(getObjectParams)
         const url = await getSignedUrl(s3, command, { expiresIn: 36000 })
         userData[0].imageName = url
-      } 
+      }
       res.status(201).json(userData)
     } else {
       res.status(401)
     }
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
@@ -393,7 +273,7 @@ export const getUserPosts = async (req, res, next) => {
     }
     res.send(posts)
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 // get user---------------------------
@@ -415,7 +295,7 @@ export const getUsername = async (req, res, next) => {
     userName[0].imageName = url
     res.status(200).json({ name: userName[0].name, profilePic: userName[0].imageName });
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
@@ -423,7 +303,7 @@ export const getPosterData = async (req, res, next) => {
   try {
 
     const userName = await userModel.find({ _id: req.params.id });
-    // console.log(userName[0].imageName);
+    // throw(userName[0].imageName);
     const getObjectParams = {
       Bucket: bucketName,
       Key: userName[0].imageName,
@@ -433,7 +313,7 @@ export const getPosterData = async (req, res, next) => {
     userName[0].imageName = url
     res.status(200).json({ name: userName[0].name, profilePic: userName[0].imageName });
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
@@ -446,11 +326,11 @@ export const getOtpPh = async (req, res, next) => {
       const token = createToken(verifyNumber._id)
       res.status(200).json({ verifyNumber, token });
     } else {
-      console.log("Number not found in the database");
+      throw("Number not found in the database");
       res.status(400).send("Number not found in the database");
     }
   } catch (error) {
-    console.log(error);
+    throw(error);
     res.status(500).send("Internal Server Error");
   }
 }
@@ -463,13 +343,13 @@ export const likePost = async (req, res, next) => {
     let value = null;
     const currentUser = await userModel.findOne({ _id: req.body.userId })
     const post = await postModel.findById(req.body.postId);
-    console.log(post.userId, "tt");
+    throw(post.userId, "tt");
     const likedPost = post.likes.find((id) => id == req.body.userId);
     if (!likedPost) {
       const newNotification = new notification({
         senderName: currentUser,
         receiverId: post.userId,
-        postId:req.body.postId,
+        postId: req.body.postId,
         message: 'liked your post'
       })
       newNotification.save()
@@ -482,7 +362,7 @@ export const likePost = async (req, res, next) => {
     await post.save();
     res.status(201).send({ likes: post.likes.length, value });
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 };
 
@@ -499,7 +379,7 @@ export const deletePost = async (req, res, next) => {
 }
 
 
- 
+
 export const followUser = async (req, res) => {
 
   try {
@@ -522,14 +402,14 @@ export const followUser = async (req, res) => {
           res.send('you already follow this user')
         }
       } catch (err) {
-        console.log(err);
+        throw(err);
         return res.status(403)
       }
     } else {
       return res.send('you cant follow yourself')
     }
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
@@ -554,14 +434,14 @@ export const followUsers = async (req, res) => {
           res.status(403).send('you already follow this user')
         }
       } catch (err) {
-        console.log(err);
+        throw(err);
         return res.status(403)
       }
     } else {
       return res.status(403).send('you cant follow yourself')
     }
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
@@ -664,24 +544,24 @@ export const getSuggestions = async (req, res, next) => {
 
     res.status(200).json(updatedUsers);
   } catch (error) {
-    console.log(error);
+    throw(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-export const getNotification=async(req,res,next)=>{
+export const getNotification = async (req, res, next) => {
   try {
-    const response=await notification.find({receiverId:req.params.id}).sort({_id:-1})
+    const response = await notification.find({ receiverId: req.params.id }).sort({ _id: -1 })
     // const response=await notification.aggregate([{$group : {_id:receiverId}}])
-    // console.log(response);
+    // throw(response);
     res.status(200).send(response)
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
-export const getAllUsers=async(req,res,next)=>{
-  const id=req.params.id
+export const getAllUsers = async (req, res, next) => {
+  const id = req.params.id
   try {
     const response = await userModel.find({ _id: { $ne: id } });
     for (let i = 0; i < response.length; i++) {
@@ -695,11 +575,34 @@ export const getAllUsers=async(req,res,next)=>{
     }
     res.send(response)
   } catch (error) {
-    console.log(error);
+    throw(error);
   }
 }
 
+export const removeSuggetion = async (req, res, next) => {
+  try {
+    const response = await userModel.updateOne(
+      { _id: req.params.id },
+      { $addToSet: { blacklistedid: req.body.id } }
+    );
+    res.send(response)
 
+  } catch (error) {
+    throw(error);
+  }
+}
+
+export const reportPost=async(req,res,next)=>{
+  try {
+    const report = await ReportModel.create(
+      req.body
+    )
+    res.status(200).send(report)
+
+  } catch (error) {
+    throw(error);
+  }
+}
 
 
 

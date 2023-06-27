@@ -5,7 +5,6 @@ import Card from "../../Card/Card";
 
 export default function NotificationCard(props) {
   const notifications = props.notificationData;
-  console.log(notifications, "w");
   return (
     <>
       <div className="">

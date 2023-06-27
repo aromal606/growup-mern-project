@@ -6,7 +6,6 @@ import Card from "../../Card/Card";
 function UserProfileComponent({}) {
   const id = localStorage.getItem("id");
   const [modal, setModel] = useState();
-  const [posts, setPosts] = useState([]);
   const toggleModal = () => {
     setModel(!modal);
   };
@@ -19,17 +18,7 @@ function UserProfileComponent({}) {
     })();
   }, []);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`http://localhost:4000/getUserPosts/${id}`);
-        setPosts(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchPosts();
-  }, []);
+ 
 
 
   return (
@@ -89,7 +78,7 @@ function UserProfileComponent({}) {
                     <div className="following ">
                       <h1 className="font-semibold text-lg">Post</h1>
                       <h1 className="font-semibold text-slate-700 text-center text-sm">
-                        82
+                        8
                       </h1>
                     </div>
                   </div>

@@ -34,6 +34,9 @@ const authSlice=createSlice({
       }
   
 
+    },
+    verify:{
+        
     }
 })
 export const {setLogin,setLogout}=authSlice.actions

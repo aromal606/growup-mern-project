@@ -4,19 +4,38 @@ import { useNavigate } from "react-router-dom";
 import LeftSideBarComponent from "../../../Components/User/Leftsidebar/LeftSideBarComponent";
 import NavigationBarComponent from "../../../Components/User/Navigationbar/NavigationBarComponent";
 import PostSharingComponent from "../../../Components/User/PostSharing/PostSharingComponent";
-import PostCardHeaderSection from "../../../Components/User/PostCard/PostCardHeaderSection";
 import Card from "../../../Components/Card/Card";
 import { useSelector } from "react-redux";
 import RightSideBarComponent from "../../../Components/User/Rigthsidebar/RightSideBarComponent";
+import axiosApi from "../../../API/axiosApi";
 
 const HomePage = () => {
   const user = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const userType = localStorage.getItem("usertype");
-
+  const userId = localStorage.getItem("id");
   const [posts, setPosts] = useState([]);
   const [sharedPosts, setSharedPosts] = useState([]);
+
+  const [checkUser, setCheckUser] = useState(false);
+  const { verifyUser } = axiosApi();
+  const verifyUserStatus = async () => {
+    const response = await verifyUser(userId);
+    if (response.status === "Active") {
+      setCheckUser(true);
+    } else {
+      setCheckUser(false);
+      navigate("/login");
+      localStorage.removeItem("token");
+    }
+  };
+  console.log(checkUser);
+
+  useEffect(() => {
+    console.log("verifyuser");
+    verifyUserStatus();
+  }, [checkUser]);
 
   useEffect(() => {
     if (!token) {
@@ -27,10 +46,12 @@ const HomePage = () => {
   }, [token, navigate, userType]);
 
   const handlePostShare = async (sharedPost) => {
-    console.log(sharedPost,"sharedPost");
+    console.log(sharedPost, "sharedPost");
     try {
-      const response = await axios.post("http://localhost:4000/userPostShare", sharedPost);
-      console.log(response,"22222222");
+      const response = await axios.post(
+        "http://localhost:4000/userPostShare",
+        sharedPost
+      );
       setSharedPosts((prevSharedPosts) => [...prevSharedPosts, response.data]);
     } catch (error) {
       console.error(error);
@@ -67,8 +88,7 @@ const HomePage = () => {
         </div>
         <div className=" flex">
           <div className="w-1/3 sm:block ">
-          <RightSideBarComponent />
-
+            <RightSideBarComponent />
           </div>
         </div>
       </div>

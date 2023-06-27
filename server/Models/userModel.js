@@ -42,18 +42,29 @@ const userSchema = new mongoose.Schema({
     followings:{
         type:Array,
         default:[]
-    }
+    },
+    blacklistedid:{
+        type:Array,
+        default:[]
+    },
+    status:{
+        type:String,
+        
+    },
 })
 
 userSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email });
     if (user) {
-        const auth = await bcrypt.compare(password, user.password)
+        const auth = await bcrypt.compare(password, user.password);
         if (auth) {
+            if (user.status === "Block") {
+                throw Error("Sorry you are blocked by Admin");
+            }
             return user;
         }
-        throw Error("Incorrect password")
+        throw Error("Incorrect password");
     }
-    throw Error("Incorrect Email")
-}
+    throw Error("Incorrect email");
+};
 export const userModel = mongoose.model("users", userSchema)

@@ -42,7 +42,7 @@ function ProfileComponent({}) {
     fetchPosts();
   }, []);
 
-
+console.log(posts.length,"wertyuio");
 
   const handleUnfollow = async (id, myId) => {
     try {
@@ -189,7 +189,7 @@ function ProfileComponent({}) {
                       <div className="following ">
                         <h1 className="font-semibold text-lg">Post</h1>
                         <h1 className="font-semibold text-slate-700 text-center text-sm">
-                          82
+                         {posts.length}
                         </h1>
                       </div>
                     </div>
@@ -199,7 +199,7 @@ function ProfileComponent({}) {
             : null}
         </div>
       </Card>
-      <OthersPosts id={id} />
+      {/* <OthersPosts id={id} /> */}
     </>
   );
 }

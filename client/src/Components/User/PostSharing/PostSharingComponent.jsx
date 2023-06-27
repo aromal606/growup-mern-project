@@ -70,7 +70,7 @@ const PostSharingComponent = () => {
                       />
                     </svg>
 
-                    <span className="text-gray-500">Add Image/Video</span>
+                    {/* <span className="text-gray-500">Add Image/Video</span> */}
                   </label>
                 </div>
                 <div>

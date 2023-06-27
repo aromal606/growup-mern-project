@@ -8,7 +8,10 @@ import { Link, useNavigate } from "react-router-dom";
 import authApi from "../../../API/axiosApi";
 import Swal from "sweetalert2";
 import ComenterName from "../UserName/ComenterName";
-import CommentCountComponent from "./CommentCountComponent"
+import CommentCountComponent from "./CommentCountComponent";
+import DropdownComponent from "../dropdownreport/DropdownComponent";
+// import DropdownComponent from "../dropdownreport/DropdownComponent";
+
 const { deletePost } = authApi();
 const PostCardHeaderSection = (props) => {
   const [posts, setPosts] = useState([]);
@@ -224,23 +227,15 @@ const PostCardHeaderSection = (props) => {
                             </li>
                           )}
                           {userId !== obj.userId && (
-                            <li className="flex font-semibold gap-3 rounded-sm hover:bg-gray-300 hover:scale-110 dark:hover:bg-gray-400">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                                />
-                              </svg>
-                              report
-                            </li>
+                           
+
+                              <p>{
+                                  <DropdownComponent
+                                    postId={obj._id}
+                                    userId={userId}
+                                  />
+                                }</p>
+                           
                           )}
                         </ul>
                       </Card>
@@ -284,12 +279,11 @@ const PostCardHeaderSection = (props) => {
                 </button>
               </div>
               <div className="flex items-center gap-2">
-               
-                  <CommentCountComponent
-                    postId={obj._id}
-                    onCommentAdded={onCommentAdded}
-                  />
-              
+                <CommentCountComponent
+                  postId={obj._id}
+                  onCommentAdded={onCommentAdded}
+                />
+
                 <button
                   onClick={() => {
                     setShowModal(true),

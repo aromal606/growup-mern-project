@@ -6,5 +6,13 @@ const axiosConfig = axios.create({
 { withCredentials: true}
 
 );
+const adminAxiosConfig = axios.create({
+    baseURL:"http://localhost:4000/admin",
+},
+{ withCredentials: true}
 
-export default axiosConfig;
+);
+
+export {axiosConfig,adminAxiosConfig};
+
+

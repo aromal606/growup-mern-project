@@ -22,11 +22,9 @@ const Login = () => {
   useEffect(() => {
     if (token) {
       if (usertype === "client") {
-        // Also, use strict equality (===) instead of loose equality (==)
         navigate("/home");
       }
       if (usertype === "freelancer") {
-        // Also, use strict equality (===) instead of loose equality (==)
         navigate("/home");
       }
     }
@@ -53,16 +51,7 @@ const Login = () => {
       setFormError("Password must be between 6 to 12 characters");
     } else {
       try {
-        const response = await apiLogin(formValues); // Use the renamed constant apiLogin
-        console.log(response, "login response");
-        if (response.status === 201) {
-          toast.error(response.data.message, {
-            position: toast.POSITION.TOP_RIGHT,
-          });
-          
-        }
-        if (response.status === 200) {
-          // Also, use strict equality (===) instead of loose equality (==)
+        const response = await apiLogin(formValues); 
           localStorage.setItem("token", response.data.token);
           localStorage.setItem("usertype", response.data.user.accounttype);
           localStorage.setItem("id", response.data.user._id);
@@ -74,11 +63,11 @@ const Login = () => {
             })
           );
           navigate("/home");
-        }
+        
       } catch (error) {
-        // toast.error(error.response.response.error, {
-        //   position: toast.POSITION.TOP_RIGHT,
-        // });
+        toast.error(error.msg, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
         console.log(error);
       }
     }

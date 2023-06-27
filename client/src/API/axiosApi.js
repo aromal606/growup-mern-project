@@ -1,14 +1,11 @@
-import  axiosConfig from '../config/axiosConfig'
+import  {axiosConfig} from '../config/axiosConfig'
 const axiosApi = ()=>{
     const login = async (logindata) =>{
         try{
            const response = await axiosConfig.post('/login', logindata)
-           console.log('looo', response);
            return response
         }catch(err){
-            console.log("error");
-            // throw{msg: err.response.data.message}
-            console.log(err,"error");
+            throw{msg:err.response.data}
         }
     }
 
@@ -18,6 +15,17 @@ const axiosApi = ()=>{
             return response.data
         }catch(err) {
             throw{msg: err.response.data.message}
+        }
+    }
+
+    const verifyUser=async(userId)=>{
+        try {
+            const response=await axiosConfig.get(`/verifyuser/${userId}`)
+            return response.data
+        } catch (error) {
+            console.log(error);
+            throw{msg: err.response.data}
+
         }
     }
 
@@ -94,8 +102,28 @@ const axiosApi = ()=>{
         }
     }
 
+    const removeSuggetion=async(Id,id)=>{
+        try {
+            const response=await axiosConfig.post(`/removesuggetion/${Id}`,{id})
+            console.log(response,"axiosApi");
+            return response
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const reportPost=async(data)=>{
+        
+        console.log(data,"jjj");
+        try {
+            const response=await axiosConfig.post('/reportpost',data)
+            return response
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-    return { login, verifyEmail, sharePost, deletePost, getFollowers, getFollowings, unFollowUser, followUser, getNotification, getAllUsers }
+
+    return { login, verifyEmail,verifyUser, sharePost, deletePost, getFollowers, getFollowings, unFollowUser, followUser, getNotification, getAllUsers, removeSuggetion, reportPost }
 }
 
 export default axiosApi;
