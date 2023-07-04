@@ -12,6 +12,7 @@ import ColorRingLoader from "./Components/Loader/ColorRingLoader";
 import "react-toastify/dist/ReactToastify.css";
 import LoginPage from "./pages/admin/login/LoginPage";
 import axiosApi from "./API/axiosApi";
+import Chat from "./pages/User/chat/Chat";
 
 const userId = localStorage.getItem("id");
 const Landingpage = lazy(() => import("./pages/User/LandingPage/Landingpage"));
@@ -203,6 +204,15 @@ const App = () => {
           element={
             <Suspense fallback={<ColorRingLoader />}>
               <Adminusers />
+            </Suspense>
+          }
+        />
+         <Route
+          exact
+          path="/chat"
+          element={
+            <Suspense fallback={<ColorRingLoader />}>
+              <Chat />
             </Suspense>
           }
         />

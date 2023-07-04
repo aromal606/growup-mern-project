@@ -9,11 +9,11 @@ export default function NotificationCard(props) {
     <>
       <div className="">
         <p className="text-center font-semibold text-xl">Notifications</p>
-      </div>
+      </div> 
       {notifications &&
         notifications.map((obj) => (
           <Card>
-            <div className="ml-1 flex h-13 items-center">
+            <div key={obj?._id} className="ml-1 flex h-13 items-center">
               <div className="text-base flex item-center font-medium">
                 <p className=" ">
                   <NameComponent posterId={obj.senderName._id} />

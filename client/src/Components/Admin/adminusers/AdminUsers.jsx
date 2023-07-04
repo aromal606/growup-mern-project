@@ -13,10 +13,9 @@ const AdminUsers = () => {
     const fetchUserData = async () => {
       try {
         const { data } = await getAllUser();
-        console.log(data,"23233");
         setValue(data);
       } catch (error) {
-        console.log(error);
+        throw error;
       }
     };
 

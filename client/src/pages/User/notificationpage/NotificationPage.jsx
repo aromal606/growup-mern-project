@@ -16,7 +16,6 @@ const NotificationPage = () => {
     const fetchData = async () => {
       try {
         const response = await getNotification(id);
-        console.log(response.data,"1111");
         setNotificationData(response.data);
       } catch (error) {
         // Handle error
@@ -36,10 +35,10 @@ const NotificationPage = () => {
       </Card>
       </div>
 
-      <div className="mt-2 mr-1">
+      <div className="mt-16 mr-1">
         <LeftSideBarComponent />
       </div>
-      <div className="mt-20 w-full">
+      <div className="mt-20 w-full h-[32rem] overflow-y-scroll no-scrollbar">
       <NotificationCard notificationData={notificationData} />
       </div>
     </div>

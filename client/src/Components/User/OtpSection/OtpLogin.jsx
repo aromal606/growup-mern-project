@@ -10,12 +10,13 @@ import { RecaptchaVerifier } from "firebase/auth";
 import { Toaster } from "react-hot-toast";
 import { ToastContainer, toast } from "react-toastify";
 import { signInWithPhoneNumber } from "firebase/auth";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setLogin } from "../../../../redux/features/authSlice";
 import CounterComponent from "../../User/OtpSection/CounterComponent";
+import axiosApi from "../../../API/axiosApi";
 
 export default function OtpLogin() {
+  const { otpLogin } = axiosApi();
   const [otp, setOtp] = useState("");
   const [ph, setPh] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,60 +42,37 @@ export default function OtpLogin() {
   }
 
   const handleSubmit = async (e) => {
-    console.log("hoiii");
-    const otpNumbet = ph;
     e.preventDefault();
     try {
-      const { data } = await axios.post("http://localhost:4000/otp_login", {
-        ph: ph,
-      });
+      const { data } = await otpLogin(ph);
+
       if (data) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("id", data.verifyNumber._id);
-
-        if (data.errors) {
-          toast.error(data.errors, {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-
-          console.log(data.errors, "data.errors");
-        } else {
-          console.log("otp success data", data);
-
-          onSignup();
-          onOTPVerify();
-        }
+        onSignup();
       }
     } catch (error) {
       // toast.error(error.response.data, {
-      //   position: "top-center",
-      //   autoClose: 5000,
-      //   hideProgressBar: false,
-      //   closeOnClick: true,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "dark",
-      // });
-      console.log(error, "catch error");
-    }
-  };
-
-  function onSignup() {
-    setLoading(true);
-    onCaptchaVerify();
-
-    const appVerifier = window.recaptchaVerifier;
-
-    const formatPh = "+" + ph;
-    signInWithPhoneNumber(auth, formatPh, appVerifier)
+        //   position: "top-center",
+        //   autoClose: 5000,
+        //   hideProgressBar: false,
+        //   closeOnClick: true,
+        //   pauseOnHover: true,
+        //   draggable: true,
+        //   progress: undefined,
+        //   theme: "dark",
+        // });
+        console.log(error, "catch error");
+      }
+    };
+    
+    function onSignup() {
+      setLoading(true);
+      onCaptchaVerify();
+      onOTPVerify();
+      
+      const appVerifier = window.recaptchaVerifier;
+      
+      const formatPh = "+" + ph;
+      signInWithPhoneNumber(auth, formatPh, appVerifier)
       .then((confirmationResult) => {
         window.confirmationResult = confirmationResult;
         setLoading(false);
@@ -103,7 +81,7 @@ export default function OtpLogin() {
       })
       .catch((error) => {
         // toast.error("error dfgdfg");
-console.log(error,"from otp login");
+        console.log(error, "from otp login");
         setLoading(false);
         console.log(error);
       });
@@ -116,6 +94,8 @@ console.log(error,"from otp login");
       .then(async (res) => {
         setUser(res.user);
         setLoading(false);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("id", data.verifyNumber._id);
         navigate("/home");
       })
       .catch((err) => {

@@ -21,7 +21,7 @@ const AdminBlockList = ({ user }) => {
         })
       );
     } catch (error) {
-      console.log(error);
+      return error
     }
   };
 
@@ -39,7 +39,7 @@ const AdminBlockList = ({ user }) => {
         const updatedUsers = await Promise.all(promises);
         setBlockedUsers(updatedUsers);
       } catch (error) {
-        console.log(error);
+       throw error
       }
     };
 
@@ -94,82 +94,3 @@ const AdminBlockList = ({ user }) => {
 };
 
 export default AdminBlockList;
-
-
-
-
-// import React, { useState, useEffect } from "react";
-// import adminAxiosApi from "../../../API/adminAxiosApi";
-// import NameComponent from "../../User/UserName/NameComponent";
-
-// const AdminBlockList = ({ user }) => {
-//   const { blockAUser, getUserStatus } = adminAxiosApi();
-//   const [blockedUsers, setBlockedUsers] = useState([]);
-//   const [searchQuery, setSearchQuery] = useState("");
-
-//   const blockUser = async (id) => {
-//     try {
-//       const { data } = await blockAUser(id);
-//       setBlockedUsers((prevBlockedUsers) =>
-//         prevBlockedUsers.map((user) => {
-//           if (user._id === id) {
-//             return {
-//               ...user,
-//               status: data.status
-//             };
-//           }
-//           return user;
-//         })
-//       );
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchUserStatus = async () => {
-//       try {
-//         const promises = user.map(async (obj) => {
-//           const { data } = await getUserStatus(obj._id);
-//           return {
-//             ...obj,
-//             status: data.status
-//           };
-//         });
-
-//         const updatedUsers = await Promise.all(promises);
-//         const filteredUsers = updatedUsers.filter((user) =>
-//           user.name.toLowerCase().includes(searchQuery.toLowerCase())
-//         );
-//         setBlockedUsers(filteredUsers);
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     };
-
-//     fetchUserStatus();
-//   }, [user, searchQuery]);
-
-//   return (
-//     <>
-//       <div className="">
-//         <input
-//           type="text"
-//           placeholder="Search by name"
-//           value={searchQuery}
-//           onChange={(e) => setSearchQuery(e.target.value)}
-//         />
-//         {blockedUsers.map((obj) => (
-//           <div
-//             className="p-3 mt-1 bg-gray-500 rounded flex justify-between"
-//             key={obj._id}
-//           >
-//             {/* Render user components */}
-//           </div>
-//         ))}
-//       </div>
-//     </>
-//   );
-// };
-
-// export default AdminBlockList;

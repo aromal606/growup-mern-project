@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LeftSideBarComponent from "../../../Components/User/Leftsidebar/LeftSideBarComponent";
 import NavigationBarComponent from "../../../Components/User/Navigationbar/NavigationBarComponent";
@@ -8,9 +7,15 @@ import Card from "../../../Components/Card/Card";
 import { useSelector } from "react-redux";
 import RightSideBarComponent from "../../../Components/User/Rigthsidebar/RightSideBarComponent";
 import axiosApi from "../../../API/axiosApi";
+import io from 'socket.io-client'
+const socket=io.connect('http://localhost:8800')
 
 const HomePage = () => {
-  const user = useSelector((state) => state.auth);
+const sendMessage=()=>{
+
+  socket.emit("from-home",{word:"hii"})
+}
+
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const userType = localStorage.getItem("usertype");
@@ -19,7 +24,7 @@ const HomePage = () => {
   const [sharedPosts, setSharedPosts] = useState([]);
 
   const [checkUser, setCheckUser] = useState(false);
-  const { verifyUser } = axiosApi();
+  const { verifyUser, getPosts, sharePost } = axiosApi();
   const verifyUserStatus = async () => {
     const response = await verifyUser(userId);
     if (response.status === "Active") {
@@ -30,10 +35,8 @@ const HomePage = () => {
       localStorage.removeItem("token");
     }
   };
-  console.log(checkUser);
 
   useEffect(() => {
-    console.log("verifyuser");
     verifyUserStatus();
   }, [checkUser]);
 
@@ -48,10 +51,7 @@ const HomePage = () => {
   const handlePostShare = async (sharedPost) => {
     console.log(sharedPost, "sharedPost");
     try {
-      const response = await axios.post(
-        "http://localhost:4000/userPostShare",
-        sharedPost
-      );
+      const response = await sharePost(sharedPost)
       setSharedPosts((prevSharedPosts) => [...prevSharedPosts, response.data]);
     } catch (error) {
       console.error(error);
@@ -61,7 +61,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/getPosts");
+        const response = await getPosts()
         setPosts(response.data);
       } catch (error) {
         console.error(error);
@@ -74,13 +74,13 @@ const HomePage = () => {
   return (
     <>
       <Card>
-        <div className="">
+        <div onClick={sendMessage} className="">
           <NavigationBarComponent />
         </div>
       </Card>
       <div className="grow flex max-w-8xl mx-auto gap-2 h-screen ">
-        <div></div>
-        <div className="hidden sm:block grow ">
+     
+        <div className="hidden sm:block grow mt-10">
           <LeftSideBarComponent />
         </div>
         <div className="grow relative">

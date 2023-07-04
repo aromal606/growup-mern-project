@@ -54,7 +54,6 @@ export const login = async (req, res, next) => {
 export const getAllUsers = async (req, res, next) => {
     try {
         const data = await userModel.find({})
-        console.log(data);
         for (let i = 0; i < data.length; i++) {
             const getObjectParams = {
                 Bucket: bucketName,
@@ -88,18 +87,18 @@ export const getReportedPosts = async (req, res, next) => {
             for (let i = 0; i < data.length; i++) {
                 const postId = data[i].postId;
                 const postData = await postModel.findById(postId);
-                const status=postData.status
+                const status = postData.status
                 const getObjectParams = {
                     Bucket: bucketName,
                     Key: postData.imageName,
                 };
                 const command = new GetObjectCommand(getObjectParams);
                 const url = await getSignedUrl(s3, command, { expiresIn: 36000 });
-                
+
                 const updatedObject = {
                     ...data[i],
                     imageName: url,
-                    status:status,
+                    status: status,
                 };
                 updatedData.push(updatedObject);
             }
@@ -108,16 +107,12 @@ export const getReportedPosts = async (req, res, next) => {
         }
     } catch (error) {
         console.log(error);
-        // res.status(500).send(error)
     }
 };
 
-export const getPostStatus=async(req,res,next)=>{
-    console.log("hii");
+export const getPostStatus = async (req, res, next) => {
     try {
         const response = await postModel.find({});
-        // const response = await postModel.find({ status: { $nin: ["Active", "Unblock"] } });
-        console.log(response,"222");
         res.send(response)
     } catch (error) {
         console.log(error);
@@ -149,10 +144,10 @@ export const blockAPost = async (req, res, next) => {
             const post = await postModel.findById(req.body.id)
             if (post.status == "Block") {
                 await postModel.updateOne({ _id: req.body.id }, { $set: { status: "Unblock" } })
-                res.status(200).send({ id: req.body.id,status:"unblocked" })
+                res.status(200).send({ id: req.body.id, status: "unblocked" })
             } else {
                 await postModel.updateOne({ _id: req.body.id }, { $set: { status: "Block" } })
-                res.status(200).send({ id: req.body.id, status:"blocked" })
+                res.status(200).send({ id: req.body.id, status: "blocked" })
             }
         }
     } catch (error) {

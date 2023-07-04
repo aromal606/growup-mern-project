@@ -28,7 +28,7 @@ const AdminBlockedPosts = ({ posts }) => {
         Swal.fire("success", `Post is ${data.status}!`, "success");
       }
     } catch (error) {
-      console.log(error);
+      Swal.fire("fail", ` ${error}!`, "fail");
     }
   };
 
@@ -102,34 +102,3 @@ const AdminBlockedPosts = ({ posts }) => {
 };
 
 export default AdminBlockedPosts;
-
-
-
-// useEffect(() => {
-//   const blockingPost = async (id) => {
-//     try {
-//       const { data } = await blockAPost(id);
-//       if (data) {
-//         setStatus(data.status);
-//         const updatedStatus =
-//           data.status === 'active'
-//             ? 'Block'
-//             : data.status === 'Block'
-//             ? 'Unblock'
-//             : 'Block';
-
-//         const updatedPostList = updatedPosts.map((post) =>
-//           post._doc.postId === id ? { ...post, status: updatedStatus } : post
-//         );
-//         setUpdatedPosts(updatedPostList);
-
-//         Swal.fire('success', `Post is ${data.status}!`, 'success');
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   // Call the blockingPost function here
-//   blockingPost(id);
-// }, []); 

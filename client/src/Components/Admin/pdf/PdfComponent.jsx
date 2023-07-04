@@ -5,9 +5,7 @@ import "jspdf-autotable";
 const PdfComponent = ({data,action}) => {
   // const Data={data}
   const [people, setPeople] = useState(data);
-  console.log(data,"pdf");
-  console.log(action,"action");
-  console.log(people,"state");
+
   useEffect(()=>{
     setPeople(data)
 

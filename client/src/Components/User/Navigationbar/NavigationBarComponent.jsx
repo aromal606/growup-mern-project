@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 const NavigationBarComponent = () => {
   const navigate = useNavigate();
 
@@ -12,15 +12,12 @@ const NavigationBarComponent = () => {
       <div className="bg-gradient-to-l from-indigo-200 via-blue-400 to-white fixed shadow-lg top-0 left-0 w-full z-10  ">
         <div className="max-w-screen-full  flex flex-wrap justify-around mx-auto p-4">
           <div className="">
-
-          <a href="https://flowbite.com/" className="items-center">
             <img
               src="https://images.unsplash.com/photo-1499875470908-f67c014dab92?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=866&q=80"
               className="h-8  overflow-hidden mr-3"
               alt="home"
             />
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"></span>
-          </a>
           </div>
           <div className="flex md:order-2 gap-2">
             <button
@@ -98,21 +95,20 @@ const NavigationBarComponent = () => {
                 onClick={logout}
               >
                 <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                    />
-                  </svg>
-               {/* put icon svg */}
-                
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                  />
+                </svg>
+                {/* put icon svg */}
               </a>
             </button>
           </div>
@@ -144,42 +140,30 @@ const NavigationBarComponent = () => {
               />
             </div>
             <div className="">
-
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium  -gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:-0  dark:bg-gray-800 md:dark:bg-gray-900 dark:-gray-700">
-              <li className="">
-                <a
-                  href="#"
-                  className="block py-2 pl-3 pr-4 text-white bg-blue-700 rounded md:bg-transparent md:text-white md:p-0 md:dark:text-blue-500"
-                  aria-current="page"
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
-                >
-                  Chat
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
-                >
-                  Friends
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-white md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:-gray-700"
-                >
-                  Services
-                </a>
-              </li>
-            </ul>
+              <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium  -gray-100 rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:-0  dark:bg-gray-800 md:dark:bg-gray-900 dark:-gray-700">
+                <Link to="/">
+                  <li className="">
+                  
+                      Home
+                    
+                  </li>
+                </Link>
+                <li>
+                  
+                    Chat
+                 
+                </li>
+                <li>
+                 
+                    Friends
+                 
+                </li>
+                <li>
+                  
+                    Services
+                  
+                </li>
+              </ul>
             </div>
           </div>
         </div>

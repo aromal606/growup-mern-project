@@ -8,6 +8,15 @@ const axiosApi = ()=>{
             throw{msg:err.response.data}
         }
     }
+    const otpLogin = async(data)=>{
+        try {
+            const response = await axiosConfig.post('/otp_login',{ph:data})
+            return response
+            
+        } catch (error) {
+            throw error
+        }
+    }
 
     const verifyEmail = async (dataURL) => {
         try{
@@ -23,8 +32,7 @@ const axiosApi = ()=>{
             const response=await axiosConfig.get(`/verifyuser/${userId}`)
             return response.data
         } catch (error) {
-            console.log(error);
-            throw{msg: err.response.data}
+            throw error
 
         }
     }
@@ -38,6 +46,25 @@ const axiosApi = ()=>{
             
         }
     }
+    const likePost = async(postId,userId)=>{
+        try {
+            const response=await axiosConfig.post('/likepost',{postId,userId})
+            return response;
+        } catch (error) {
+            throw error
+
+        }
+    }
+
+    const getPosts=async()=>{
+        try {
+            const response= await axiosConfig.get('/getPosts')
+            return response
+        } catch (error) {
+            throw error
+        }
+    }
+
     const deletePost=async(postId)=>{
         try {
             const response=await axiosConfig.delete(`/deletePost/${postId}`)
@@ -65,23 +92,20 @@ const axiosApi = ()=>{
         }
     }
     const unFollowUser=async(id,myId)=>{
-        console.log(id,myId,"UnFollowUser axiosApi");
 
         try {
             const response=await axiosConfig.post(`unFollowUser/${id}`,{myId})
             return response
         } catch (error) {
-            console.log(error);
+            throw error
         }
     }
     const followUser=async(id,myId)=>{
-        console.log(id,myId);
         try {
             const response=await axiosConfig.post(`followUsers/${id}`,{myId})
-            console.log(response,"axiosApi");
             return response
         } catch (error) {
-            console.log(error);
+            throw error
         }
     }
     const getNotification=async(id)=>{
@@ -89,7 +113,7 @@ const axiosApi = ()=>{
             const response=await axiosConfig.get(`/getnotification/${id}`)
             return response
         } catch (error) {
-           console.log(error); 
+            throw error
         }
     }
 
@@ -98,32 +122,41 @@ const axiosApi = ()=>{
             const response=await axiosConfig.get(`/getallusers/${id}`)
             return response
         } catch (error) {
-            console.log(error);
+            throw error
         }
     }
 
     const removeSuggetion=async(Id,id)=>{
         try {
             const response=await axiosConfig.post(`/removesuggetion/${Id}`,{id})
-            console.log(response,"axiosApi");
             return response
         } catch (error) {
-            console.log(error);
+          throw error
         }
     }
     const reportPost=async(data)=>{
         
-        console.log(data,"jjj");
         try {
             const response=await axiosConfig.post('/reportpost',data)
             return response
         } catch (error) {
-            console.log(error);
+            throw error
+        }
+    }
+    
+    const userDatas=async(id)=>{
+        try {
+            const response=await axiosConfig.get(`/getusers/${id}`)
+            return response
+        } catch (error) {
+            throw error
         }
     }
 
 
-    return { login, verifyEmail,verifyUser, sharePost, deletePost, getFollowers, getFollowings, unFollowUser, followUser, getNotification, getAllUsers, removeSuggetion, reportPost }
+
+
+    return { login, otpLogin, verifyEmail, verifyUser, sharePost, likePost, getPosts, deletePost, getFollowers, getFollowings, unFollowUser, followUser, userDatas, getNotification, getAllUsers, removeSuggetion, reportPost }
 }
 
 export default axiosApi;

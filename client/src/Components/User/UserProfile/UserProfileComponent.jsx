@@ -30,8 +30,8 @@ function UserProfileComponent({}) {
             alt="image"
             className="h-44 w-full overflow-hidden object-cover"
           />
-          {details && details.length > 0 ? (
-            details.map((data) => (
+          {details && details.userData.length > 0 ? (
+            details.userData.map((data) => (
               <div className="block md:flex gap-6" key={data._id}>
                 <div className="h-28 w-28 overflow-hidden border rounded-full">
                   <img
@@ -78,7 +78,7 @@ function UserProfileComponent({}) {
                     <div className="following ">
                       <h1 className="font-semibold text-lg">Post</h1>
                       <h1 className="font-semibold text-slate-700 text-center text-sm">
-                        8
+                       {details.postLength}
                       </h1>
                     </div>
                   </div>

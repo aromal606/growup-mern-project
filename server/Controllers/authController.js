@@ -130,7 +130,6 @@ export const userPostShare = async (req, res, next) => {
     }
   } catch (error) {
     throw(error);
-    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -223,7 +222,6 @@ export const getPosts = async (req, res, next) => {
         posts[i].imageName = url;
       }
     }
-    console.log(posts);
     res.send(posts);
   } catch (error) {
     throw(error);
@@ -237,6 +235,7 @@ export const userProfileData = async (req, res, next) => {
 
   try {
     const userData = await userModel.find({ _id: req.params.id })
+    const postLength= await postModel.countDocuments({userId: req.params.id})
     if (userData && userData.length > 0) {
       if (userData[0].imageName !== null && userData[0].imageName !== undefined) {
         const getObjectParams = {
@@ -247,7 +246,7 @@ export const userProfileData = async (req, res, next) => {
         const url = await getSignedUrl(s3, command, { expiresIn: 36000 })
         userData[0].imageName = url
       }
-      res.status(201).json(userData)
+      res.status(201).json({userData, postLength})
     } else {
       res.status(401)
     }
@@ -279,6 +278,20 @@ export const getUserPosts = async (req, res, next) => {
 // get user---------------------------
 
 export const userData = async (req, res, next) => {
+  try {
+
+    const userData = await userModel.find({ _id: req.params.id });
+    const getObjectParams = {
+      Bucket: bucketName,
+      Key: userData[0].imageName,
+    }
+    const command = new GetObjectCommand(getObjectParams)
+    const url = await getSignedUrl(s3, command, { expiresIn: 36000 })
+    userData[0].imageName = url
+    res.status(200).json({ name: userData[0].name, profilePic: userData[0].imageName, userId: userData[0]._id });
+  } catch (error) {
+    throw(error);
+  }
 }
 
 export const getUsername = async (req, res, next) => {
@@ -343,9 +356,9 @@ export const likePost = async (req, res, next) => {
     let value = null;
     const currentUser = await userModel.findOne({ _id: req.body.userId })
     const post = await postModel.findById(req.body.postId);
-    throw(post.userId, "tt");
+    
     const likedPost = post.likes.find((id) => id == req.body.userId);
-    if (!likedPost) {
+    if (!likedPost) { 
       const newNotification = new notification({
         senderName: currentUser,
         receiverId: post.userId,

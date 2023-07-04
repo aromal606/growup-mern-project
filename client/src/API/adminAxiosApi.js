@@ -11,14 +11,12 @@ const adminAxiosApi=()=>{
     const getAllUser=async()=>{
         try {
             const response=await adminAxiosConfig.get('/users')
-            // console.log(response,"qqqqqqqqqqqqqqqqqqqqqqqqqqq");
            return response
         } catch (error) {
             return error
         }
     }
     const blockAUser=async(userId)=>{
-        console.log(userId,"adminaxiosApi3");
         try {
             const response=await adminAxiosConfig.post('/blockAUser',{userId:userId})
            return response
@@ -87,7 +85,6 @@ const adminAxiosApi=()=>{
             const response=await adminAxiosConfig.get('/getreportedposts')
             return response
         } catch (error) {
-            console.log(error);
             return error
 
         }

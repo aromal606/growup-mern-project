@@ -92,7 +92,7 @@ const OthersPosts = (props) => {
   return (
     <>
       {posts?.map((obj) => (
-        <div className="flex  grow overflow-hidden">
+        <div key={obj._id} className="flex  grow overflow-hidden">
           <Card>
             <div className="flex gap-2 ">
               <div className="flex grow items-center ">

@@ -1,8 +1,7 @@
 import React, { useState, useEffect, memo } from "react";
 import axios from "axios";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Card from "../../Card/Card";
-import OthersPosts from "../Posts/OthersPosts";
 import Swal from "sweetalert2";
 import axiosApi from "../../../API/axiosApi";
 
@@ -24,6 +23,7 @@ function ProfileComponent({}) {
       const response = await axios.get(
         `http://localhost:4000/getprofile/${id}`
       );
+
       setDetails(response.data);
     })();
   }, [followings]);
@@ -41,8 +41,6 @@ function ProfileComponent({}) {
     };
     fetchPosts();
   }, []);
-
-console.log(posts.length,"wertyuio");
 
   const handleUnfollow = async (id, myId) => {
     try {
@@ -75,7 +73,6 @@ console.log(posts.length,"wertyuio");
         });
       }
     } catch (error) {
-      console.log(error);
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -108,7 +105,6 @@ console.log(posts.length,"wertyuio");
         },
       });
     } catch (error) {
-      console.log(error);
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -129,8 +125,8 @@ console.log(posts.length,"wertyuio");
             alt="image"
             className="h-44 w-full overflow-hidden object-cover"
           />
-          {details && details.length > 0
-            ? details.map((data) => (
+          {details && details.userData.length > 0
+            ? details.userData.map((data) => (
                 <div className="block md:flex gap-9 mt-4" key={data._id}>
                   <div className="h-28 w-28 overflow-hidden border rounded-full ">
                     <img
@@ -189,7 +185,7 @@ console.log(posts.length,"wertyuio");
                       <div className="following ">
                         <h1 className="font-semibold text-lg">Post</h1>
                         <h1 className="font-semibold text-slate-700 text-center text-sm">
-                         {posts.length}
+                         {posts?.length}
                         </h1>
                       </div>
                     </div>

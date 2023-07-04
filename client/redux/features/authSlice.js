@@ -3,7 +3,7 @@ export const Login=createAsyncThunk("auth/login",async()=>{
     try {
         
     } catch (error) {
-        console.log(error);
+        throw error
     }
 })
 const authSlice=createSlice({

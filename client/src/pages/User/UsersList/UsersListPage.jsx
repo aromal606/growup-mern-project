@@ -14,7 +14,7 @@ const UsersListPage = () => {
         </Card>
         </div>
 
-        <div className="mt-2 mr-1">
+        <div className="mt-16 mr-1">
           <LeftSideBarComponent />
         </div>
         <div className="border mt-16 w-full">

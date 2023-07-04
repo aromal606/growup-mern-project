@@ -5,9 +5,6 @@ import React, { useState, useEffect } from "react";
 const NameComponent = (props) => {
   const {posterId} = props;
 
-  // const reUserId = userid?.userId;
-  // console.log(reUserId);
-
   const [name, setName] = useState();
   const [profilepic, setProfilePic] = useState("");
 

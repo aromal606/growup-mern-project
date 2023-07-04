@@ -4,6 +4,8 @@ import { connect } from 'mongoose'
 import authRoute from "./Routes/authRoutes.js"
 import commentRoute from "./Routes/commentRoute.js"
 import adminAuthRoute from './Routes/adminroutes/adminAuthRoute.js'
+import chatRoutes from './Routes/chatRoutes.js'
+import messageRoutes from './Routes/messageRoutes.js'
 const app = express()
 import cookieParser from "cookie-parser"
 import bodyParser from "body-parser";
@@ -35,3 +37,5 @@ app.use(json());
 app.use("/",authRoute)
 app.use("/comment",commentRoute)
 app.use("/admin",adminAuthRoute)
+app.use(chatRoutes)
+app.use(messageRoutes)

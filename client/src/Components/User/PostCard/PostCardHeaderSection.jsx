@@ -4,16 +4,17 @@ import axios from "axios";
 import ReactTimeago from "react-timeago";
 import OthersName from "../UserName/OthersName";
 import ReplyComponent from "./ReplyComponent";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import authApi from "../../../API/axiosApi";
 import Swal from "sweetalert2";
 import ComenterName from "../UserName/ComenterName";
 import CommentCountComponent from "./CommentCountComponent";
 import DropdownComponent from "../dropdownreport/DropdownComponent";
-// import DropdownComponent from "../dropdownreport/DropdownComponent";
-
-const { deletePost } = authApi();
+import axiosApi from "../../../API/axiosApi";
 const PostCardHeaderSection = (props) => {
+  const userId = localStorage.getItem("id");
+  const { deletePost } = authApi();
+  const { getPosts, likePost } = axiosApi();
   const [posts, setPosts] = useState([]);
   const [deletePosts, setDeletePost] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -26,7 +27,6 @@ const PostCardHeaderSection = (props) => {
   const [dropdownOpen, setDropdownOpen] = useState(
     Array(posts.length).fill(false)
   );
-  const userId = localStorage.getItem("id");
 
   const toggleDropdown = (postId) => {
     setDropdownOpen((prevDropdownOpen) => ({
@@ -42,7 +42,7 @@ const PostCardHeaderSection = (props) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/getPosts");
+        const response = await getPosts();
         setPosts(response.data);
       } catch (error) {
         console.error(error);
@@ -78,13 +78,10 @@ const PostCardHeaderSection = (props) => {
 
   const handleLike = async (postId) => {
     try {
-      await axios.post("http://localhost:4000/likepost", {
-        postId,
-        userId: localStorage.getItem("id"),
-      });
+      const checkLiked = await likePost(postId, userId);
 
       // Refresh the posts after liking
-      const response = await axios.get("http://localhost:4000/getPosts");
+      const response = await getPosts();
       setPosts(response.data);
       setIsLiked(!isLiked);
     } catch (error) {
@@ -148,7 +145,7 @@ const PostCardHeaderSection = (props) => {
   return (
     <>
       {posts?.map((obj, index) => (
-        <div className="flex w-full grow overflow-hidden">
+        <div key={index} className="flex w-full grow overflow-hidden">
           <Card>
             <div className="flex gap-2 ">
               <div className="p-1"></div>
@@ -227,15 +224,14 @@ const PostCardHeaderSection = (props) => {
                             </li>
                           )}
                           {userId !== obj.userId && (
-                           
-
-                              <p>{
-                                  <DropdownComponent
-                                    postId={obj._id}
-                                    userId={userId}
-                                  />
-                                }</p>
-                           
+                            <p>
+                              {
+                                <DropdownComponent
+                                  postId={obj._id}
+                                  userId={userId}
+                                />
+                              }
+                            </p>
                           )}
                         </ul>
                       </Card>
@@ -336,7 +332,7 @@ const PostCardHeaderSection = (props) => {
                     <div className="rounded-lg shadow-lg  flex flex-col w-full bg-white outline-none dark:border-gray-800 focus:outline-none dark:bg-gray-800">
                       <div className="p-6 flex-auto">
                         {showComment.map((obj) => (
-                          <div className="mb-4">
+                          <div key={index} className="mb-4">
                             <div className="flex justify-between">
                               <div className="flex gap-2">
                                 {/* <ProfileImageComponent userId={obj.userId} /> */}
