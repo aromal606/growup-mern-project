@@ -1,46 +1,30 @@
 import React, { useState, useEffect, memo } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import Card from "../../Card/Card";
 import Swal from "sweetalert2";
 import axiosApi from "../../../API/axiosApi";
 
-const { unFollowUser, followUser } = axiosApi();
-
 function ProfileComponent({}) {
+  
+  const { unFollowUser, followUser, getProfile } = axiosApi();
   const Id=localStorage.getItem("id")
   const { id } = useParams();
   const [modal, setModel] = useState();
-  const [posts, setPosts] = useState([]);
   const [followings, setFollowings] = useState([]);
+  const [details, setDetails] = useState();
+  console.log(Id,id);
   const toggleModal = () => {
     setModel(!modal);
   };
-  const [details, setDetails] = useState();
 
   useEffect(() => {
     (async () => {
-      const response = await axios.get(
-        `http://localhost:4000/getprofile/${id}`
-      );
+      const response = await getProfile(id)
 
       setDetails(response.data);
     })();
   }, [followings]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:4000/getUserPosts/${id}`
-        );
-        setPosts(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchPosts();
-  }, []);
 
   const handleUnfollow = async (id, myId) => {
     try {
@@ -135,6 +119,7 @@ function ProfileComponent({}) {
                       className="rounded-full w-full h-full object-cover border-4 md:relative z-5 md:left-0"
                     />
                   </div>
+                  
                   <div className="grid gap-3">
                     <div className="flex justify-between">
                       <p className="font-semibold md:text-2xl text-xl">
@@ -185,7 +170,7 @@ function ProfileComponent({}) {
                       <div className="following ">
                         <h1 className="font-semibold text-lg">Post</h1>
                         <h1 className="font-semibold text-slate-700 text-center text-sm">
-                         {posts?.length}
+                         {details?.postLength}
                         </h1>
                       </div>
                     </div>
@@ -195,7 +180,6 @@ function ProfileComponent({}) {
             : null}
         </div>
       </Card>
-      {/* <OthersPosts id={id} /> */}
     </>
   );
 }

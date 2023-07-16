@@ -17,7 +17,7 @@ const UsersListPage = () => {
         <div className="mt-16 mr-1">
           <LeftSideBarComponent />
         </div>
-        <div className="border mt-16 w-full">
+        <div className=" mt-16 w-full">
           <UsersListComponent />
         </div>
       </div>

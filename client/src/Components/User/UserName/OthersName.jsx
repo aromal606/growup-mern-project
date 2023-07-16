@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosApi from "../../../API/axiosApi";
 const OthersName = (props) => {
-  const {posterId} = props;
+  const {posterId} = props;   
+  const {getNameAndData} = axiosApi()
     
   const [name, setName] = useState("");
   const [profilepic, setProfilePic] = useState("");
@@ -9,8 +10,7 @@ const OthersName = (props) => {
 
   useEffect(() => {
     const getUserName = async () => {
-      const { data } = await axios.get(
-        `http://localhost:4000/getPosterData/${posterId}`);
+      const { data } = await getNameAndData(posterId)
       setName(data?.name);
       setProfilePic(data?.profilePic);
     };
@@ -29,7 +29,7 @@ const OthersName = (props) => {
           />
         </div>
       </div>
-      <div className="">{name}</div>
+      <div className="font-semibold">{name}</div>
     </div>
   )
 }

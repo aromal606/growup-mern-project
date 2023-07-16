@@ -114,7 +114,7 @@ const ChatBoxComponent = (props) => {
         >
           {chat === null ? (
             <span className="text-center">
-              Tap on a Chat to Start Conversation
+              Tap on a Connections to Start Conversation
             </span>
           ) : (
             messages &&

@@ -3,7 +3,7 @@ import { ReplyCommentModel } from '../Models/ReplayCommentModel.js';
 
 export const createComment = async (req, res, next) => {
     try {
-        const comment = await commentModel.create(req.body)
+        const comment = await commentModel.create(req.body.data)
         res.status(201).send(comment)
     } catch (error) {
         res.status(500).send(error)
@@ -31,8 +31,9 @@ export const getReplyComments = async (req, res, next) => {
 }
 
 export const sendReply = async (req, res, next) => {
+
     try {
-        const { data } = await ReplyCommentModel.create(req.body)
+        const { data } = await ReplyCommentModel.create(req.body.data)
         res.status(200).send(data)
     } catch (error) {
         res.status(500).send(error)

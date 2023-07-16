@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Timeago from "react-timeago";
 import NameComponent from "../UserName/NameComponent";
-import axios from "axios";
+import commentApi from "../../../API/commentApi";
 
 const ReplyComponent = ({ commentId }) => {
+
+  const {getReplay,sendReplay} = commentApi()
   const [reply, setReply] = useState("");
   const [replied, setReplied] = useState([]);
   const [show, setShow] = useState(false); // Add show state
@@ -17,7 +19,7 @@ const ReplyComponent = ({ commentId }) => {
   const handleReply = async (e) => {
     e.preventDefault(); // Prevent form submission
     try {
-      await axios.post("http://localhost:4000/comment/sendReply", replyObj);
+      const response = await sendReplay(replyObj)
       setReply("");
       fetchReplyComments(); // Fetch updated reply comments after sending reply
     } catch (error) {
@@ -27,10 +29,7 @@ const ReplyComponent = ({ commentId }) => {
 
   const fetchReplyComments = async () => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/comment/getReplyComments",
-        { commentId: commentId }
-      );
+      const {data} = await getReplay(commentId)
       setReplied(data);
     } catch (error) {
       console.log(error);

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Card from "../../Card/Card";
 import NameComponent from "../UserName/NameComponent";
 import CommentCountComponent from "../PostCard/CommentCountComponent";
 import ReactTimeago from "react-timeago";
 import ReplyComponent from "../PostCard/ReplyComponent";
 import { Link } from "react-router-dom";
+import commentApi from "../../../API/commentApi";
+import axiosApi from "../../../API/axiosApi";
 const UserPosts = () => {
+  const {likePost, getuserPosts } = axiosApi()
+  const {createComment, getComment} = commentApi()
   const id = localStorage.getItem("id");
   const [posts, setPosts] = useState([]);
   const [dropDownOpen, setDropdownOpen] = useState(false);
@@ -26,9 +29,11 @@ const UserPosts = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/getUserPosts/${id}`
-        );
+        // const response = await axios.get(
+        //   `http://localhost:4000/getUserPosts/${id}`
+        // );
+
+        const response= await getuserPosts(id)
 
         setPosts(response.data);
       } catch (error) {
@@ -42,10 +47,11 @@ const UserPosts = () => {
   useEffect(() => {
     const fetchComment = async () => {
       try {
-        const response = await axios.post(
-          "http://localhost:4000/comment/getComment",
-          { postId: postIdSetter }
-        );
+        // const response = await axios.post(
+        //   "http://localhost:4000/comment/getComment",
+        //   { postId: postIdSetter }
+        // );
+        const response = await getComment(postIdSetter)
         setShowComment(response.data);
         if (postIdSetter === postId && typeof onCommentAdded === "function") {
           onCommentAdded();
@@ -60,15 +66,19 @@ const UserPosts = () => {
 
   const handleLike = async (postId) => {
     try {
-      await axios.post("http://localhost:4000/likepost", {
-        postId,
-        userId: localStorage.getItem("id"),
-      });
-
+      // await axios.post("http://localhost:4000/likepost", {
+      //   postId,
+      //   userId: localStorage.getItem("id"),
+      // });
+      const likeResponse = await likePost(postId, id)
+      console.log(likeResponse,"like response");
       // Refresh the posts after liking
-      const response = await axios.get(
-        `http://localhost:4000/getUserPosts/${id}`
-      );
+      // const response = await axios.get(
+      //   `http://localhost:4000/getUserPosts/${id}`
+      // );
+      const response= await getuserPosts(id)
+
+
       setPosts(response.data);
       setIsLiked(!isLiked);
     } catch (error) {
@@ -84,7 +94,9 @@ const UserPosts = () => {
 
   const addComment = async () => {
     try {
-      axios.post("http://localhost:4000/comment/createComment", commentData);
+      const response = await createComment(commentData)
+
+      // axios.post("http://localhost:4000/comment/createComment", commentData);
     } catch (error) {
       console.log(error);
     }

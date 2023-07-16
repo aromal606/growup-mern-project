@@ -1,17 +1,16 @@
-import axios from "axios";
 import React, { useState, useEffect } from "react";
-
+import axiosApi from "../../../API/axiosApi";
 
 const NameComponent = (props) => {
   const {posterId} = props;
+  const {getNameAndData} = axiosApi()
 
   const [name, setName] = useState();
   const [profilepic, setProfilePic] = useState("");
 
   useEffect(() => {
     const getUserName = async () => {
-      const { data } = await axios.get(
-        `http://localhost:4000/getUsername/${posterId}`);
+      const { data } = await getNameAndData(posterId)
       setName(data?.name);
       setProfilePic(data?.profilePic);
     };

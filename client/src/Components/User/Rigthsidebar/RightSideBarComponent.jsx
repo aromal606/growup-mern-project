@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import axiosApi from "../../../API/axiosApi";
-const { removeSuggetion } = axiosApi();
 const RightSideBarComponent = () => {
+  const { removeSuggetion, followUser, getsuggestion } = axiosApi();
   const id = localStorage.getItem("id");
   const [suggestions, setSuggestions] = useState([]);
   const [followed, setFollowed] = useState(false);
@@ -12,10 +11,8 @@ const RightSideBarComponent = () => {
 
   const follow = async (followingId) => {
     try {
-      const res = await axios.put(
-        `http://localhost:4000/${followingId}/follow`,
-        { id }
-      );
+ 
+      const res = await followUser(followingId,id)
       const userName = res.data.name;
       Swal.fire({
         icon: "success",
@@ -42,9 +39,12 @@ const RightSideBarComponent = () => {
     if (id || followed) {
       const getSuggestions = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:4000/suggestions/${id}`
-          );
+          // const response = await axios.get(
+          //   `http://localhost:4000/suggestions/${id}`
+          // );
+
+          const response = await getsuggestion(id)
+
           setSuggestions(response.data);
         } catch (error) {
           console.log(error);

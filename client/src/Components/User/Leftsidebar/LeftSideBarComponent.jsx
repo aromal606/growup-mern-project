@@ -8,7 +8,7 @@ const LeftSideBarComponent = () => {
     navigate("/login");
   };
   return (
-    <> 
+    <>
       <div className=" gap-3 flex-col  p-3  bg-gray-200 shadow w-60">
         <div className="">
           <div className="flex items-center"></div>
@@ -86,6 +86,7 @@ const LeftSideBarComponent = () => {
                     </svg>
 
                     <span>Chat</span>
+                    <div className="border border-red-500 bg-red-500 w-3 h-3 rounded-full"></div>
                   </a>
                 </li>
               </Link>
@@ -136,6 +137,7 @@ const LeftSideBarComponent = () => {
                     </svg>
 
                     <span>Notifications</span>
+                    <div className="border border-red-500 bg-red-500 w-3 h-3 rounded-full"></div>
                   </a>
                 </li>
               </Link>

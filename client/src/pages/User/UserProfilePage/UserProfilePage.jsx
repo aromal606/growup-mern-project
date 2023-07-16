@@ -3,13 +3,12 @@ import UserProfileComponent from "../../../Components/User/UserProfile/UserProfi
 import LeftSideBarComponent from "../../../Components/User/Leftsidebar/LeftSideBarComponent";
 import UserPosts from "../../../Components/User/Posts/UserPosts";
 import NavigationBarComponent from "../../../Components/User/Navigationbar/NavigationBarComponent";
+import OthersPosts from "../../../Components/User/Posts/OthersPosts";
 const UserProfilePage = () => {
-
+  const id = localStorage.getItem("id");
   return (
     <div className="grow h-screen ">
-      
-        <NavigationBarComponent />
-      
+      <NavigationBarComponent />
 
       <div className="h-screen  w-full flex ">
         <div className="mt-16 hidden md:block">
@@ -17,11 +16,11 @@ const UserProfilePage = () => {
         </div>
         <div className="grow overflow-x-scroll scrollbar-hide">
           <div className="overflow-hidden mt-14">
-          <UserProfileComponent />
-
+            <UserProfileComponent />
           </div>
           <div className="h-screen">
-            <UserPosts />
+            {/* <UserPosts /> */}
+            <OthersPosts id={id} />
           </div>
         </div>
       </div>
@@ -30,3 +29,7 @@ const UserProfilePage = () => {
 };
 
 export default UserProfilePage;
+
+{
+  /* <OthersPosts id={id} /> */
+}

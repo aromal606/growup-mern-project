@@ -6,20 +6,22 @@ const userSchema = new mongoose.Schema({
         required: [true, "name is required"],
     }, bio: {
         type: String,
-        
+
     }, imageName: {
         type: String,
-    },companyname:{
-        type:String
+    }, companyname: {
+        type: String
     },
     email: {
         type: String,
         required: [true, "email is required"],
         unique: true
     },
-    workingOn:{
-        type:[String]
-    },
+    workingOn: [
+        {
+            type: String,
+        },
+    ],
     number: {
         type: Number,
         required: [true, "number is required"],
@@ -35,21 +37,21 @@ const userSchema = new mongoose.Schema({
         required: [true, "choose one"],
 
     },
-    followers:{
-        type:Array,
-        default:[]
+    followers: {
+        type: Array,
+        default: []
     },
-    followings:{
-        type:Array,
-        default:[]
+    followings: {
+        type: Array,
+        default: []
     },
-    blacklistedid:{
-        type:Array,
-        default:[]
+    blacklistedid: {
+        type: Array,
+        default: []
     },
-    status:{
-        type:String,
-        
+    status: {
+        type: String,
+
     },
 })
 

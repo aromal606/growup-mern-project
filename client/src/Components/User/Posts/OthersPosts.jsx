@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Card from "../../Card/Card";
 import NameComponent from "../UserName/NameComponent";
 import CommentCountComponent from "../PostCard/CommentCountComponent";
 import ReactTimeago from "react-timeago";
 import ReplyComponent from "../PostCard/ReplyComponent";
 import { Link } from "react-router-dom";
+import axiosApi from "../../../API/axiosApi";
+import commentApi from "../../../API/commentApi";
 const OthersPosts = (props) => {
+  const {likePost, getuserPosts, getPosts} = axiosApi()
+  const {createComment, getComment} = commentApi()
   const { id } = props;
   const Id=localStorage.getItem("id")
   const [posts, setPosts] = useState([]);
@@ -27,9 +30,11 @@ const OthersPosts = (props) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:4000/getUserPosts/${id}`
-        );
+        // const response = await axios.get(
+        //   `http://localhost:4000/getUserPosts/${id}`
+        // );
+      const response= await getuserPosts(id)
+
 
         setPosts(response.data);
       } catch (error) {
@@ -42,10 +47,12 @@ const OthersPosts = (props) => {
   useEffect(() => {
     const fetchComment = async () => {
       try {
-        const response = await axios.post(
-          "http://localhost:4000/comment/getComment",
-          { postId: postIdSetter }
-        );
+        // const response = await axios.post(
+        //   "http://localhost:4000/comment/getComment",
+        //   { postId: postIdSetter }
+        // );
+        const response = await getComment(postIdSetter)
+
         setShowComment(response.data);
         if (postIdSetter === postId && typeof onCommentAdded === "function") {
           onCommentAdded();
@@ -60,13 +67,15 @@ const OthersPosts = (props) => {
 
   const handleLike = async (postId) => {
     try {
-      await axios.post("http://localhost:4000/likepost", {
-        postId,
-        userId: localStorage.getItem("id"),
-      });
+      // await axios.post("http://localhost:4000/likepost", {
+      //   postId,
+      //   userId: localStorage.getItem("id"),
+      // });
+      const likeResponse = await likePost(postId, Id)
 
       // Refresh the posts after liking
-      const response = await axios.get("http://localhost:4000/getPosts");
+      // const response = await axios.get("http://localhost:4000/getPosts");
+     const response = await getPosts()
       setPosts(response.data);
       setIsLiked(!isLiked);
     } catch (error) {
@@ -82,7 +91,9 @@ const OthersPosts = (props) => {
 
   const addComment = async () => {
     try {
-      axios.post("http://localhost:4000/comment/createComment", commentData);
+      const response = await createComment(commentData)
+     
+      // axios.post("http://localhost:4000/comment/createComment", commentData);
     } catch (error) {
       console.log(error);
     }
@@ -95,10 +106,10 @@ const OthersPosts = (props) => {
         <div key={obj._id} className="flex  grow overflow-hidden">
           <Card>
             <div className="flex gap-2 ">
-              <div className="flex grow items-center ">
+              <div className="flex grow items-center justify-between w-[66rem] ">
                 <div className="grow">
                   <div className="flex items-center gap-2">
-                    <Link to="/userProfile">
+                    <Link to={`/otherProfile/${obj.userId}`}>
                       <a className="font-semibold">
                         <NameComponent posterId={obj?.userId} />
                       </a>
@@ -269,7 +280,6 @@ const OthersPosts = (props) => {
                           <div className="mb-4">
                             <div className="flex justify-between">
                               <div className="flex gap-2">
-                                {/* <ProfileImageComponent userId={obj.userId} /> */}
                                 <div className="dark:text-gray-200">
                                   <NameComponent posterId={obj.commenterId} />
                                   <p>{obj.comment}</p>

@@ -1,6 +1,8 @@
 import { userModel } from '../Models/userModel.js'
 import { postModel } from '../Models/PostModel.js'
 import { notification } from '../Models/Notifications.js'
+import { chatModel } from "../Models/chatModel.js";
+
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import dotenv from "dotenv";
@@ -56,7 +58,7 @@ export const login = async (req, res, next) => {
   } catch (err) {
     res.status(401).json(err.message);
   }
-};
+}; 
 export const register = async (req, res, next) => {
   try {
     const { name, email, number, accounttype } = req.body;
@@ -159,8 +161,11 @@ export const deleteFile = (fileName) => {
 // update profile---------------------
 
 export const updateProfile = async (req, res, next) => {
+
+  const checkboxValues = req.body.checkbox.split(',');
+  console.log(checkboxValues,"qw");
+
   try {
-    //   const checkboxValues = req.body.checkbox.split(',');
     const updateData = {};
     if (req.body.name !== '') {
       updateData.name = req.body.name;
@@ -168,8 +173,8 @@ export const updateProfile = async (req, res, next) => {
     if (req.body.email !== '') {
       updateData.email = req.body.email;
     }
-    if (req.body.phone !== '') {
-      updateData.phone = req.body.phone;
+    if (req.body.number !== '') { 
+      updateData.phone = req.body.number;
     }
     if (req.file) {
       const file = req.file;
@@ -186,18 +191,22 @@ export const updateProfile = async (req, res, next) => {
     if (req.body.companyname !== '') {
       updateData.companyname = req.body.companyname;
     }
-    if (req.body.checkbox.length > 0) {
-      updateData.workingOn = req.body.checkbox;
+    if (req.body.number !== '') {
+      updateData.number = req.body.number;
+    }
+    if (checkboxValues.length > 0) {
+      updateData.workingOn = checkboxValues;
     } else {
       // Retrieve the previous checkbox values and assign them if no checkboxes are selected
       const user = await userModel.find({ _id: req.body.userId });
       updateData.workingOn = user.workingOn;
     }
+    console.log(updateData);
     await userModel.findOneAndUpdate(
       { _id: req.body.userId },
       { $set: updateData },
       { new: true }
-    );
+    ); 
     res.status(201).json({ created: true });
   } catch (error) {
     throw(error);
@@ -352,6 +361,7 @@ export const getOtpPh = async (req, res, next) => {
 
 // ---------------likePost------------
 export const likePost = async (req, res, next) => {
+  console.log(req.body);
   try {
     let value = null;
     const currentUser = await userModel.findOne({ _id: req.body.userId })
@@ -409,6 +419,10 @@ export const followUser = async (req, res) => {
             message: 'started following you'
           })
           newNotification.save()
+          const newChat=new chatModel ({
+            members:[req.body.id, req.params.id]
+        })
+        const result=await newChat.save()
           return res.status(200).send(user)
         }
         else {
@@ -441,6 +455,12 @@ export const followUsers = async (req, res) => {
             message: 'started following you'
           })
           newNotification.save()
+
+          const newChat=new chatModel ({
+            members:[req.body.myId, req.params.id]
+        })
+        const result=await newChat.save()
+
           return res.status(200).send(user)
         }
         else {
@@ -448,7 +468,6 @@ export const followUsers = async (req, res) => {
         }
       } catch (err) {
         throw(err);
-        return res.status(403)
       }
     } else {
       return res.status(403).send('you cant follow yourself')
@@ -470,11 +489,21 @@ export const unFollowUser = async (req, res) => {
       // Remove the id from the followings array of the current user
       currentUser.followings.pull(req.params.id);
       await currentUser.save();
+      const chat = await chatModel.findOne({
+        members: [req.body.myId, req.params.id]
+      })
+      
+      if(chat){
+        await chatModel.deleteOne({ _id: chat._id });
+      }else{
+        console.log("No Chat Found")
+      }
       return res.status(200).send('User has been unfollowed');
     } else {
       return res.status(403).send('You cannot unfollow yourself');
     }
   } catch (err) {
+    console.log(error);
     return res.status(500).send(err);
   }
 }

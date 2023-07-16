@@ -11,10 +11,7 @@ import {
 import ColorRingLoader from "./Components/Loader/ColorRingLoader";
 import "react-toastify/dist/ReactToastify.css";
 import LoginPage from "./pages/admin/login/LoginPage";
-import axiosApi from "./API/axiosApi";
 import Chat from "./pages/User/chat/Chat";
-
-const userId = localStorage.getItem("id");
 const Landingpage = lazy(() => import("./pages/User/LandingPage/Landingpage"));
 const Login = lazy(() => import("./pages/User/Login/Login"));
 const Register = lazy(() => import("./pages/User/SignUp/Register"));
@@ -30,12 +27,13 @@ const UpdateProfilePage = lazy(() =>
 const UpdateProfileComponentUser = lazy(() =>
   import("./Components/User/UpdateProfile/UpdateProfileComponentUser")
 );
+const UpdateProfileInsideApp = lazy(() =>
+  import("./pages/User/UpdateProfilePage/UpdateProfileInsideAppPage")
+);
 const UsersListPage = lazy(() =>
   import("./pages/User/UsersList/UsersListPage")
 );
-const OtherProfile = lazy(() =>
-  import("./Components/User/UserProfile/ProfileComponent")
-);
+
 const NotificationPage = lazy(() =>
   import("./pages/User/notificationpage/NotificationPage")
 );
@@ -44,7 +42,9 @@ const OtherProfilePage = lazy(() =>
 );
 const AdminDashboard = lazy(() => import("./pages/admin/home/HomePage"));
 const Adminusers = lazy(() => import("./pages/admin/userslist/UserListPage"));
-const AdminReports = lazy(() => import("./pages/admin/reportpage/AdminReportPage"));
+const AdminReports = lazy(() =>
+  import("./pages/admin/reportpage/AdminReportPage")
+);
 
 const BlockPage = lazy(() => import("./pages/User/errors/BlockPage"));
 const DropdownReport = lazy(() =>
@@ -63,6 +63,17 @@ const App = () => {
             </Suspense>
           }
         />
+
+        <Route
+          exact
+          path="/updateprofileinsideapp"
+          element={
+            <Suspense fallback={<ColorRingLoader />}>
+              <UpdateProfileInsideApp/>
+            </Suspense>
+          }
+        />
+
         <Route
           exact
           path="/Login"
@@ -112,16 +123,6 @@ const App = () => {
         />
         <Route
           exact
-          path="/profile"
-          element={
-            <Suspense fallback={<ColorRingLoader />}>
-              {/* {checkUser ? <UserProfilePage /> : <BlockPage />} */}
-              <UserProfilePage />
-            </Suspense>
-          }
-        />
-        <Route
-          exact
           path="/report"
           elemet={
             <Suspense fallback={<ColorRingLoader />}>
@@ -129,13 +130,23 @@ const App = () => {
             </Suspense>
           }
         />
-         <Route
+        <Route
           exact
           path="/reports"
           element={
             <Suspense fallback={<ColorRingLoader />}>
               {/* {checkUser ? <OtherProfilePage /> : <BlockPage />} */}
               <AdminReports />
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/profile"
+          element={
+            <Suspense fallback={<ColorRingLoader />}>
+              {/* {checkUser ? <UserProfilePage /> : <BlockPage />} */}
+              <UserProfilePage />
             </Suspense>
           }
         />
@@ -207,7 +218,7 @@ const App = () => {
             </Suspense>
           }
         />
-         <Route
+        <Route
           exact
           path="/chat"
           element={

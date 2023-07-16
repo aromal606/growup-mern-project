@@ -73,6 +73,8 @@ const sendMessage=()=>{
 
   return (
     <>
+    <div>
+
       <Card>
         <div onClick={sendMessage} className="">
           <NavigationBarComponent />
@@ -83,7 +85,7 @@ const sendMessage=()=>{
         <div className="hidden sm:block grow mt-10">
           <LeftSideBarComponent />
         </div>
-        <div className="grow relative">
+        <div className="grow relative mt-10">
           <PostSharingComponent onPostShare={handlePostShare} />
         </div>
         <div className=" flex">
@@ -92,6 +94,7 @@ const sendMessage=()=>{
           </div>
         </div>
       </div>
+    </div>
     </>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, memo } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import Card from "../../Card/Card";
-
+import axiosApi from "../../../API/axiosApi";
 function UserProfileComponent({}) {
+  const {getProfile} = axiosApi()
   const id = localStorage.getItem("id");
   const [modal, setModel] = useState();
   const toggleModal = () => {
@@ -13,13 +13,10 @@ function UserProfileComponent({}) {
 
   useEffect(() => {
     (async () => {
-      const response = await axios.get(`http://localhost:4000/getprofile/${id}`);
+      const response = await getProfile(id);
       setDetails(response.data);
     })();
   }, []);
-
- 
-
 
   return (
     <>
@@ -43,7 +40,7 @@ function UserProfileComponent({}) {
                 <div className="grid gap-3">
                   <div className="flex justify-between">
                     <p className="font-semibold md:text-2xl text-xl">{data.name}</p>
-                    <Link to={"/updateprofile"}>
+                    <Link to={"/updateprofileinsideapp"}>
                       <button className="bg-blue-500 hover:bg-blue-700 text-white mt-3 font-bold py-2 px-4 rounded-full">
                         edit
                       </button>

@@ -37,20 +37,19 @@ const PostSharingComponent = () => {
   };
   return (
     <>
-      <div className=" rounded-md  sm:p-2 md:p-3 xl:p-4 mt-10">
+      <div className=" rounded-md  sm:p-2 md:p-3 xl:p-4">
         <form onSubmit={handleSubmit}>
           <Card>
-            <div className="flex grow gap-1">
-              {/* <ProfileImageComponent userId={user?.user} /> */}
+            <div className="flex flex-col grow gap-1">
               <textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 type="text"
                 className="grow p-3 h-14 bg-gray-50 border rounded-xl"
-                placeholder={"Whats on your mind"}
+                placeholder={"Whats on your mind . . ."}
               />
-              <div className="lg:ml-0 lg:mr-2 flex items-center">
-                <div>
+              <div className="lg:ml-0 lg:mr-2 flex items-center gap-2">
+                <div className="">
                   <label
                     htmlFor="file"
                     className="flex items-center cursor-pointer"
@@ -69,38 +68,38 @@ const PostSharingComponent = () => {
                         d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
                       />
                     </svg>
-
-                    {/* <span className="text-gray-500">Add Image/Video</span> */}
                   </label>
                 </div>
-                <div>
-                  <input
-                    className="hidden"
-                    id="file"
-                    name="file"
-                    type="file"
-                    accept="image/*,video/*"
-                    onChange={handleFileChange}
-                  />
+                  <div>
+                    <input
+                      className="hidden"
+                      id="file"
+                      name="file"
+                      type="file"
+                      accept="image/*,video/*"
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                <div className="">
+                  <div className=" grow">
+                    {/* put commented code here(code is below ) */}
+
+                    <button
+                      type="submit"
+                      className="text-white bg-blue-400 px-1 text-xs xl:px-6 py-1 xl:text-md rounded-md"
+                    >
+                      Share
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="flex  p-2 grow">
-                {/* put commented code here(code is below ) */}
-
-                <button
-                  type="submit"
-                  className="text-white bg-blue-400 px-1 text-xs xl:px-6 py-1 xl:text-md rounded-md"
-                >
-                  Share
-                </button>
-              </div>
-            </div>
+            </div>{" "}
+            {}
           </Card>
         </form>
       </div>
       <div>
-
-      <PostCardHeaderSection updateComponent={postRendering} />
+        <PostCardHeaderSection updateComponent={postRendering} />
       </div>
     </>
   );

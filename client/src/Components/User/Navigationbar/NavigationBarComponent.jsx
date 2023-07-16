@@ -43,7 +43,7 @@ const NavigationBarComponent = () => {
               <span className="sr-only">Search</span>
             </button>
             <div className="relative hidden md:block">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              {/* <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
                   className="w-5 h-5 text-gray-500"
                   aria-hidden="true"
@@ -58,15 +58,15 @@ const NavigationBarComponent = () => {
                   ></path>
                 </svg>
                 <span className="sr-only">Search icon</span>
-              </div>
-              <input
+              </div> */}
+              {/* <input
                 type="text"
                 id="search-navbar"
                 className="block w-full p-2 pl-10 text-sm text-gray-900  -gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:-blue-500 dark:bg-gray-700 dark:-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:-blue-500"
                 placeholder="Search..."
-              />
+              /> */}
             </div>
-            <button
+            {/* <button
               data-collapse-toggle="navbar-search"
               type="button"
               className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -87,7 +87,7 @@ const NavigationBarComponent = () => {
                   clipRule="evenodd"
                 ></path>
               </svg>
-            </button>
+            </button> */}
             <button className="rounded-sm hover:scale-110 ">
               <a
                 href="#"
